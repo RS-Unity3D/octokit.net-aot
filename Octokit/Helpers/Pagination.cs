@@ -1,5 +1,4 @@
-﻿using Octokit.Models.Request.Enterprise;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -34,14 +33,12 @@ namespace Octokit
                 return false;
             }
 
-            if (options is ApiOptionsExtended apiOptionsInternal)
-                return !apiOptionsInternal.IsDone;
-
             if (uri.Query.Contains("page=") && options.PageCount.HasValue)
             {
                 var allValues = ToQueryStringDictionary(uri);
 
-                if (allValues.TryGetValue("page", out var pageValue))
+                string pageValue;
+                if (allValues.TryGetValue("page", out pageValue))
                 {
                     var startPage = options.StartPage ?? 1;
                     var pageCount = options.PageCount.Value;
@@ -60,14 +57,8 @@ namespace Octokit
         static Dictionary<string, string> ToQueryStringDictionary(Uri uri)
         {
             return uri.Query.Split('&')
-                .Select((keyValue, i) =>
+                .Select(keyValue =>
                 {
-                    if (i == 0)
-                    {
-                        // Trim the leading '?' character from the first key-value pair
-                        keyValue = keyValue.Substring(1);
-                    }
-                    
                     var indexOf = keyValue.IndexOf('=');
                     if (indexOf > 0)
                     {

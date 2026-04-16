@@ -76,20 +76,13 @@ namespace Octokit
 
             foreach (var existing in existingParameters)
             {
-                if (existing.Key == "page")
-                {
-                    // See https://github.com/octokit/octokit.net/issues/1955
-                    // See https://github.com/octokit/octokit.net/issues/2602
-                    // Desired behavior: don't replace page number in nextPageUri
-                    p[existing.Key] = existing.Value;
-                }
-                else if (!p.ContainsKey(existing.Key))
+                if (!p.ContainsKey(existing.Key))
                 {
                     p.Add(existing);
                 }
             }
 
-            Func<string, string, string> mapValueFunc = (key, value) => (key == "q" || key =="before" || key=="after") ? value : Uri.EscapeDataString(value);
+            Func<string, string, string> mapValueFunc = (key, value) => key == "q" ? value : Uri.EscapeDataString(value);
 
             string query = string.Join("&", p.Select(kvp => kvp.Key + "=" + mapValueFunc(kvp.Key, kvp.Value)));
             if (uri.IsAbsoluteUri)
