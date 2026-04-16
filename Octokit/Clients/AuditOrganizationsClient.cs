@@ -3,7 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
+#if USE_AOT_JSON
+using RS.SimpleJsonUnity;
+#endif
 namespace Octokit
 {
     public class AuditOrganizationsClient : ApiClient, IAuditOrganizationsClient
