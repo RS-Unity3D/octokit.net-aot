@@ -18,12 +18,12 @@ namespace Octokit
         }
 
         /// <summary>
-        /// The total number of repositories
+        /// The total number of check suites that match the request filter
         /// </summary>
         public int TotalCount { get; private set; }
 
         /// <summary>
-        /// The retrieved repositories
+        /// The retrieved check suites
         /// </summary>
         public IReadOnlyList<Repository> Repositories { get; private set; }
 

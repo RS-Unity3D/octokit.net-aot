@@ -9,7 +9,9 @@ namespace Octokit
     [DebuggerDisplay("{DebuggerDisplay,nq}")]
     public class Plan
     {
-        public Plan() { }
+        public Plan()
+        {
+        }
 
         public Plan(long collaborators, string name, long privateRepos, long space, string billingEmail, int filledSeats, int seats)
         {

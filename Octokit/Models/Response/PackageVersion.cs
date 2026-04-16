@@ -46,15 +46,12 @@ namespace Octokit
     {
         public PackageVersionMetadata() { }
 
-        public PackageVersionMetadata(string packageType, PackageVersionMetadataContainer container)
+        public PackageVersionMetadata(string packageType)
         {
             PackageType = packageType;
-            Container = container;
         }
 
         public string PackageType { get; private set; }
-
-        public PackageVersionMetadataContainer Container { get; private set; }
 
         internal string DebuggerDisplay => new SimpleJsonSerializer().Serialize(this);
     }
