@@ -25,7 +25,7 @@ namespace Octokit
     public interface IResponse
     {
         /// <summary>
-        /// Raw response body. Typically a string, but when requesting images, or binary files, it will be a Stream.
+        /// Raw response body. Typically a string, but when requesting images, it will be a byte array.
         /// </summary>
         object Body { get; }
 

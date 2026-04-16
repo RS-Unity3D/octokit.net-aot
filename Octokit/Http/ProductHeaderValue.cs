@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Octokit
+﻿namespace Octokit
 {
     /// <summary>
     /// Represents a product header value. This is used to generate the User Agent string sent with each request. The
@@ -40,16 +38,9 @@ namespace Octokit
         {
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ProductHeaderValue"/> class.
-        /// </summary>
-        /// <remarks>
-        /// See more information regarding User-Agent requirements here: https://developer.github.com/v3/#user-agent-required
-        /// </remarks>
-        /// <param name="productHeader">The <see cref="System.Net.Http.Headers.ProductHeaderValue"/>.</param>
-        public ProductHeaderValue(System.Net.Http.Headers.ProductHeaderValue productHeader)
+        ProductHeaderValue(System.Net.Http.Headers.ProductHeaderValue productHeader)
         {
-            _productHeaderValue = productHeader ?? throw new ArgumentNullException(nameof(productHeader));
+            _productHeaderValue = productHeader;
         }
 
         /// <summary>
