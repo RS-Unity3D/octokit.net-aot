@@ -44,6 +44,7 @@
 // If you are targetting WinStore, WP8 and NET4.5+ PCL make sure to #define SIMPLE_JSON_TYPEINFO;
 
 // original json parsing code from http://techblog.procurios.nl/k/618/news/view/14605/14863/How-do-I-write-my-own-parser-for-JSON.html
+#if !USE_AOT_JSON
 
 #if NETFX_CORE
 #define SIMPLE_JSON_TYPEINFO
@@ -75,6 +76,7 @@ using System.Dynamic;
 // ReSharper disable SuggestUseVarKeywordEvident
 namespace Octokit
 {
+
     /// <summary>
     /// Represents the json array.
     /// </summary>
@@ -1668,6 +1670,7 @@ namespace Octokit
 
 #endif
 
+
     namespace Reflection
     {
         // This class is meant to be copied into other libraries. So we want to exclude it from Code Analysis rules
@@ -2241,7 +2244,11 @@ namespace Octokit
             }
         }
     }
+
+
+
 }
 // ReSharper restore LoopCanBeConvertedToQuery
 // ReSharper restore RedundantExplicitArrayCreation
 // ReSharper restore SuggestUseVarKeywordEvident
+#endif
