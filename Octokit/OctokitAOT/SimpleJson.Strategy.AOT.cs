@@ -366,8 +366,37 @@ namespace RS.Octokit.AOT
         {
             return _propertiesCache.GetOrAdd(type, t =>
             {
-                return t.GetPropertiesAndFields()
-                    .ToDictionary(p => p.JsonFieldName, p => p);
+                var allProperties = new List<PropertyInfo>();
+                var allFields = new List<FieldInfo>();
+                var currentType = t;
+                while (currentType != null && currentType != typeof(object))
+                {
+                    allProperties.AddRange(currentType.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
+                    allFields.AddRange(currentType.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
+                    currentType = currentType.GetTypeInfo().BaseType;
+                }
+
+                var seen = new HashSet<string>();
+                var result = new List<PropertyOrField>();
+
+                foreach (var p in allProperties)
+                {
+                    if (p.GetIndexParameters().Length > 0) continue;
+                    if (!p.CanRead) continue;
+                    if (seen.Contains(p.Name)) continue;
+                    seen.Add(p.Name);
+                    result.Add(new PropertyOrField(p));
+                }
+
+                foreach (var f in allFields)
+                {
+                    if (seen.Contains(f.Name)) continue;
+                    if (f.IsInitOnly) continue;
+                    seen.Add(f.Name);
+                    result.Add(new PropertyOrField(f));
+                }
+
+                return result.ToDictionary(p => p.JsonFieldName, p => p);
             });
         }
 
@@ -531,12 +560,24 @@ namespace RS.Octokit.AOT
                     return null;
                 var properties = GetOrBuildProperties(type);
 
-                foreach (var prop in properties.Values.Where(p => p.CanDeserialize))
+                foreach (var prop in properties.Values.Where(p => p.CanWrite && !p.IsStatic))
                 {
                     if (dict.TryGetValue(prop.JsonFieldName, out var value))
                     {
                         var convertedValue = DeserializeObject(value, prop.Type);
-                        prop.SetValue(result, convertedValue);
+                        try
+                        {
+                            prop.SetValue(result, convertedValue);
+                        }
+                        catch
+                        {
+                            var pi = prop.MemberInfo as PropertyInfo;
+                            if (pi != null && pi.GetSetMethod(true) != null)
+                            {
+                                try { pi.SetValue(result, convertedValue, null); }
+                                catch { }
+                            }
+                        }
                     }
                 }
 
