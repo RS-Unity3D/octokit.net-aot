@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -33,13 +33,23 @@ namespace Octokit.Internal
         }
 
         /// <summary>
+        /// Creates an adapter using an externally provided <see cref="HttpClient"/>.
+        /// </summary>
+        /// <param name="httpClient">A pre-configured <see cref="HttpClient"/> instance</param>
+        public HttpClientAdapter(HttpClient httpClient)
+        {
+            Ensure.ArgumentNotNull(httpClient, nameof(httpClient));
+
+            _http = httpClient;
+        }
+
+        /// <summary>
         /// Sends the specified request and returns a response.
         /// </summary>
         /// <param name="request">A <see cref="IRequest"/> that represents the HTTP request</param>
         /// <param name="cancellationToken">Used to cancel the request</param>
-        /// <param name="preprocessResponseBody">Function to preprocess HTTP response prior to deserialization (can be null)</param>
         /// <returns>A <see cref="Task" /> of <see cref="IResponse"/></returns>
-        public async Task<IResponse> Send(IRequest request, CancellationToken cancellationToken, Func<object, object> preprocessResponseBody = null)
+        public async Task<IResponse> Send(IRequest request, CancellationToken cancellationToken)
         {
             Ensure.ArgumentNotNull(request, nameof(request));
 
@@ -49,7 +59,7 @@ namespace Octokit.Internal
             {
                 var responseMessage = await SendAsync(requestMessage, cancellationTokenForRequest).ConfigureAwait(false);
 
-                return await BuildResponse(responseMessage, preprocessResponseBody).ConfigureAwait(false);
+                return await BuildResponse(responseMessage).ConfigureAwait(false);
             }
         }
 
@@ -68,7 +78,7 @@ namespace Octokit.Internal
             return cancellationTokenForRequest;
         }
 
-        protected virtual async Task<IResponse> BuildResponse(HttpResponseMessage responseMessage, Func<object, object> preprocessResponseBody)
+        protected virtual async Task<IResponse> BuildResponse(HttpResponseMessage responseMessage)
         {
             Ensure.ArgumentNotNull(responseMessage, nameof(responseMessage));
 
@@ -83,24 +93,22 @@ namespace Octokit.Internal
                 "application/x-gzip" ,
                 "application/octet-stream"};
 
-            var content = responseMessage.Content;
-            if (content != null)
+            using (var content = responseMessage.Content)
             {
-                contentType = GetContentMediaType(content);
+                if (content != null)
+                {
+                    contentType = GetContentMediaType(responseMessage.Content);
 
-                if (contentType != null && (contentType.StartsWith("image/") || binaryContentTypes
+                    if (contentType != null && (contentType.StartsWith("image/") || binaryContentTypes
                         .Any(item => item.Equals(contentType, StringComparison.OrdinalIgnoreCase))))
-                {
-                    responseBody = await content.ReadAsStreamAsync().ConfigureAwait(false);
+                    {
+                        responseBody = await responseMessage.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        responseBody = await responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
+                    }
                 }
-                else
-                {
-                    responseBody = await content.ReadAsStringAsync().ConfigureAwait(false);
-                    content.Dispose();
-                }
-
-                if (!(preprocessResponseBody is null))
-                    responseBody = preprocessResponseBody(responseBody);
             }
 
             var responseHeaders = responseMessage.Headers.ToDictionary(h => h.Key, h => h.Value.First());
@@ -168,18 +176,10 @@ namespace Octokit.Internal
 
         static string GetContentMediaType(HttpContent httpContent)
         {
-            if (httpContent.Headers?.ContentType != null)
+            if (httpContent.Headers != null && httpContent.Headers.ContentType != null)
             {
                 return httpContent.Headers.ContentType.MediaType;
             }
-
-            // Issue #2898 - Bad "zip" Content-Type coming from Blob Storage for artifacts
-            if (httpContent.Headers?.TryGetValues("Content-Type", out var contentTypeValues) == true
-                && contentTypeValues.FirstOrDefault() == "zip")
-            {
-                return "application/zip";
-            }
-            
             return null;
         }
 

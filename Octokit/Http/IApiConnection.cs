@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -71,15 +70,6 @@ namespace Octokit
         /// <returns>The API resource's raw content or <c>null</c> if the <paramref name="uri"/> points to a directory.</returns>
         /// <exception cref="ApiException">Thrown when an API error occurs.</exception>
         Task<byte[]> GetRaw(Uri uri, IDictionary<string, string> parameters);
-
-        /// <summary>
-        /// Gets the raw stream of the API resource at the specified URI.
-        /// </summary>
-        /// <param name="uri">URI of the API resource to get</param>
-        /// <param name="parameters">Parameters to add to the API request</param>
-        /// <returns>The API resource's raw stream or <c>null</c> if the <paramref name="uri"/> points to a directory.</returns>
-        /// <exception cref="ApiException">Thrown when an API error occurs.</exception>
-        Task<Stream> GetRawStream(Uri uri, IDictionary<string, string> parameters);
 
         /// <summary>
         /// Gets all API resources in the list at the specified URI.
@@ -153,19 +143,6 @@ namespace Octokit
         /// <returns><see cref="IReadOnlyList{T}"/> of the API resources in the list.</returns>
         /// <exception cref="ApiException">Thrown when an API error occurs.</exception>
         Task<IReadOnlyList<T>> GetAll<T>(Uri uri, IDictionary<string, string> parameters, string accepts, ApiOptions options);
-
-        /// <summary>
-        /// Gets all API resources in the list at the specified URI.
-        /// </summary>
-        /// <typeparam name="T">Type of the API resource in the list.</typeparam>
-        /// <param name="uri">URI of the API resource to get</param>
-        /// <param name="parameters">Parameters to add to the API request</param>
-        /// <param name="accepts">Accept header to use for the API request</param>
-        /// <param name="options">Options for changing the API response</param>
-        /// <param name="preprocessResponseBody">Function to preprocess HTTP response prior to deserialization (can be null)</param>
-        /// <returns><see cref="IReadOnlyList{T}"/> of the API resources in the list.</returns>
-        /// <exception cref="ApiException">Thrown when an API error occurs.</exception>
-        Task<IReadOnlyList<T>> GetAll<T>(Uri uri, IDictionary<string, string> parameters, string accepts, ApiOptions options, Func<object, object> preprocessResponseBody);
 
         /// <summary>
         /// Creates a new API resource in the list at the specified URI.
@@ -310,26 +287,9 @@ namespace Octokit
         /// Updates the API resource at the specified URI.
         /// </summary>
         /// <param name="uri">URI of the API resource to patch</param>
-        /// <param name="data">Object that describes the API resource; this will be serialized and used as the request's body</param>
-        /// <returns>A <see cref="Task"/> for the request's execution.</returns>
-        Task Patch(Uri uri, object data);
-
-        /// <summary>
-        /// Updates the API resource at the specified URI.
-        /// </summary>
-        /// <param name="uri">URI of the API resource to patch</param>
         /// <param name="accepts">Accept header to use for the API request</param>
         /// <returns>A <see cref="Task"/> for the request's execution.</returns>
         Task Patch(Uri uri, string accepts);
-
-        /// <summary>
-        /// Updates the API resource at the specified URI.
-        /// </summary>
-        /// <param name="uri">URI of the API resource to patch</param>
-        /// <param name="data">Object that describes the API resource; this will be serialized and used as the request's body</param>
-        /// <param name="accepts">Accept header to use for the API request</param>
-        /// <returns>A <see cref="Task"/> for the request's execution.</returns>
-        Task Patch(Uri uri, object data, string accepts);
 
         /// <summary>
         /// Updates the API resource at the specified URI.

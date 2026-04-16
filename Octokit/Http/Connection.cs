@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -192,13 +191,6 @@ namespace Octokit
             return SendData<T>(uri.ApplyParameters(parameters), HttpMethod.Get, null, accepts, null, cancellationToken);
         }
 
-        public Task<IApiResponse<T>> Get<T>(Uri uri, IDictionary<string, string> parameters, string accepts, CancellationToken cancellationToken, Func<object, object> preprocessResponseBody)
-        {
-            Ensure.ArgumentNotNull(uri, nameof(uri));
-
-            return SendData<T>(uri.ApplyParameters(parameters), HttpMethod.Get, null, accepts, null, cancellationToken, null, null, preprocessResponseBody);
-        }
-
         public Task<IApiResponse<T>> Get<T>(Uri uri, TimeSpan timeout)
         {
             Ensure.ArgumentNotNull(uri, nameof(uri));
@@ -236,33 +228,6 @@ namespace Octokit
             Ensure.ArgumentNotNull(uri, nameof(uri));
 
             return GetRaw(new Request
-            {
-                Method = HttpMethod.Get,
-                BaseAddress = BaseAddress,
-                Endpoint = uri.ApplyParameters(parameters)
-            });
-        }
-
-        /// <inheritdoc/>
-        public Task<IApiResponse<byte[]>> GetRaw(Uri uri, IDictionary<string, string> parameters, TimeSpan timeout)
-        {
-            Ensure.ArgumentNotNull(uri, nameof(uri));
-
-            return GetRaw(new Request
-            {
-                Method = HttpMethod.Get,
-                BaseAddress = BaseAddress,
-                Endpoint = uri.ApplyParameters(parameters),
-                Timeout = timeout
-            });
-        }
-
-        /// <inheritdoc/>
-        public Task<IApiResponse<Stream>> GetRawStream(Uri uri, IDictionary<string, string> parameters)
-        {
-            Ensure.ArgumentNotNull(uri, nameof(uri));
-
-            return GetRawStream(new Request
             {
                 Method = HttpMethod.Get,
                 BaseAddress = BaseAddress,
@@ -417,8 +382,7 @@ namespace Octokit
             TimeSpan timeout,
             CancellationToken cancellationToken,
             string twoFactorAuthenticationCode = null,
-            Uri baseAddress = null, 
-            Func<object, object> preprocessResponseBody = null)
+            Uri baseAddress = null)
         {
             Ensure.ArgumentNotNull(uri, nameof(uri));
             Ensure.GreaterThanZero(timeout, nameof(timeout));
@@ -431,7 +395,7 @@ namespace Octokit
                 Timeout = timeout
             };
 
-            return SendDataInternal<T>(body, accepts, contentType, cancellationToken, twoFactorAuthenticationCode, request, preprocessResponseBody);
+            return SendDataInternal<T>(body, accepts, contentType, cancellationToken, twoFactorAuthenticationCode, request);
         }
 
         Task<IApiResponse<T>> SendData<T>(
@@ -442,8 +406,7 @@ namespace Octokit
             string contentType,
             CancellationToken cancellationToken,
             string twoFactorAuthenticationCode = null,
-            Uri baseAddress = null,
-            Func<object, object> preprocessResponseBody = null)
+            Uri baseAddress = null)
         {
             Ensure.ArgumentNotNull(uri, nameof(uri));
 
@@ -454,10 +417,10 @@ namespace Octokit
                 Endpoint = uri
             };
 
-            return SendDataInternal<T>(body, accepts, contentType, cancellationToken, twoFactorAuthenticationCode, request, preprocessResponseBody);
+            return SendDataInternal<T>(body, accepts, contentType, cancellationToken, twoFactorAuthenticationCode, request);
         }
 
-        Task<IApiResponse<T>> SendDataInternal<T>(object body, string accepts, string contentType, CancellationToken cancellationToken, string twoFactorAuthenticationCode, Request request, Func<object, object> preprocessResponseBody)
+        Task<IApiResponse<T>> SendDataInternal<T>(object body, string accepts, string contentType, CancellationToken cancellationToken, string twoFactorAuthenticationCode, Request request)
         {
             if (!string.IsNullOrEmpty(accepts))
             {
@@ -476,7 +439,7 @@ namespace Octokit
                 request.ContentType = contentType ?? "application/x-www-form-urlencoded";
             }
 
-            return Run<T>(request, cancellationToken, preprocessResponseBody);
+            return Run<T>(request, cancellationToken);
         }
 
         /// <summary>
@@ -502,21 +465,6 @@ namespace Octokit
         /// Performs an asynchronous HTTP PATCH request.
         /// </summary>
         /// <param name="uri">URI endpoint to send request to</param>
-        /// <param name="body">The object to serialize as the body of the request</param>
-        /// <returns><seealso cref="IResponse"/> representing the received HTTP response</returns>
-        public async Task<HttpStatusCode> Patch(Uri uri, object body)
-        {
-            Ensure.ArgumentNotNull(uri, nameof(uri));
-            Ensure.ArgumentNotNull(body, nameof(body));
-
-            var response = await SendData<object>(uri, new HttpMethod("PATCH"), body, null, null, CancellationToken.None).ConfigureAwait(false);
-            return response.HttpResponse.StatusCode;
-        }
-
-        /// <summary>
-        /// Performs an asynchronous HTTP PATCH request.
-        /// </summary>
-        /// <param name="uri">URI endpoint to send request to</param>
         /// <param name="accepts">Specifies accept response media type</param>
         /// <returns><seealso cref="IResponse"/> representing the received HTTP response</returns>
         public async Task<HttpStatusCode> Patch(Uri uri, string accepts)
@@ -525,23 +473,6 @@ namespace Octokit
             Ensure.ArgumentNotNull(accepts, nameof(accepts));
 
             var response = await SendData<object>(uri, new HttpMethod("PATCH"), null, accepts, null, CancellationToken.None).ConfigureAwait(false);
-            return response.HttpResponse.StatusCode;
-        }
-
-        /// <summary>
-        /// Performs an asynchronous HTTP PATCH request.
-        /// </summary>
-        /// <param name="uri">URI endpoint to send request to</param>
-        /// <param name="body">The object to serialize as the body of the request</param>
-        /// <param name="accepts">Specifies accept response media type</param>
-        /// <returns><seealso cref="IResponse"/> representing the received HTTP response</returns>
-        public async Task<HttpStatusCode> Patch(Uri uri, object body, string accepts)
-        {
-            Ensure.ArgumentNotNull(uri, nameof(uri));
-            Ensure.ArgumentNotNull(body, nameof(body));
-            Ensure.ArgumentNotNull(accepts, nameof(accepts));
-
-            var response = await SendData<object>(uri, new HttpMethod("PATCH"), body, accepts, null, CancellationToken.None).ConfigureAwait(false);
             return response.HttpResponse.StatusCode;
         }
 
@@ -746,50 +677,22 @@ namespace Octokit
         {
             request.Headers.Add("Accept", AcceptHeaders.RawContentMediaType);
             var response = await RunRequest(request, CancellationToken.None).ConfigureAwait(false);
-
-            if (response.Body is Stream stream)
-            {
-                return new ApiResponse<byte[]>(response, await StreamToByteArray(stream));
-            }
-
             return new ApiResponse<byte[]>(response, response.Body as byte[]);
         }
-        
-        async Task<IApiResponse<Stream>> GetRawStream(IRequest request)
-        {
-            request.Headers.Add("Accept", AcceptHeaders.RawContentMediaType);
-            var response = await RunRequest(request, CancellationToken.None).ConfigureAwait(false);
-            
-            return new ApiResponse<Stream>(response, response.Body as Stream);
-        }
 
-        async Task<byte[]> StreamToByteArray(Stream stream)
-        {
-            if (stream is MemoryStream memoryStream)
-            {
-                return memoryStream.ToArray();                
-            }
-            
-            using (var ms = new MemoryStream())
-            {
-                await stream.CopyToAsync(ms);
-                return ms.ToArray();
-            }
-        }
-
-        async Task<IApiResponse<T>> Run<T>(IRequest request, CancellationToken cancellationToken, Func<object, object> preprocessResponseBody = null)
+        async Task<IApiResponse<T>> Run<T>(IRequest request, CancellationToken cancellationToken)
         {
             _jsonPipeline.SerializeRequest(request);
-            var response = await RunRequest(request, cancellationToken, preprocessResponseBody).ConfigureAwait(false);
+            var response = await RunRequest(request, cancellationToken).ConfigureAwait(false);
             return _jsonPipeline.DeserializeResponse<T>(response);
         }
 
         // THIS IS THE METHOD THAT EVERY REQUEST MUST GO THROUGH!
-        async Task<IResponse> RunRequest(IRequest request, CancellationToken cancellationToken, Func<object, object> preprocessResponseBody = null)
+        async Task<IResponse> RunRequest(IRequest request, CancellationToken cancellationToken)
         {
             request.Headers.Add("User-Agent", UserAgent);
             await _authenticator.Apply(request).ConfigureAwait(false);
-            var response = await _httpClient.Send(request, cancellationToken, preprocessResponseBody).ConfigureAwait(false);
+            var response = await _httpClient.Send(request, cancellationToken).ConfigureAwait(false);
             if (response != null)
             {
                 // Use the clone method to avoid keeping hold of the original (just in case it effect the lifetime of the whole response

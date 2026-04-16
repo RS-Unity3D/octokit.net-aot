@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -30,25 +29,6 @@ namespace Octokit
         /// <returns><seealso cref="IResponse"/> representing the received HTTP response</returns>
         /// <remarks>The <see cref="IResponse.Body"/> property will be <c>null</c> if the <paramref name="uri"/> points to a directory instead of a file</remarks>
         Task<IApiResponse<byte[]>> GetRaw(Uri uri, IDictionary<string, string> parameters);
-
-        /// <summary>
-        /// Performs an asynchronous HTTP GET request that expects a <seealso cref="IResponse"/> containing raw data.
-        /// </summary>
-        /// <param name="uri">URI endpoint to send request to</param>
-        /// <param name="parameters">Querystring parameters for the request</param>
-        /// <param name="timeout">The Timeout value</param>
-        /// <returns><seealso cref="IResponse"/> representing the received HTTP response</returns>
-        /// <remarks>The <see cref="IResponse.Body"/> property will be <c>null</c> if the <paramref name="uri"/> points to a directory instead of a file</remarks>
-        Task<IApiResponse<byte[]>> GetRaw(Uri uri, IDictionary<string, string> parameters, TimeSpan timeout);
-
-        /// <summary>
-        /// Performs an asynchronous HTTP GET request that expects a <seealso cref="IResponse"/> containing raw data.
-        /// </summary>
-        /// <param name="uri">URI endpoint to send request to</param>
-        /// <param name="parameters">Querystring parameters for the request</param>
-        /// <returns><seealso cref="IResponse"/> representing the received HTTP response</returns>
-        /// <remarks>The <see cref="IResponse.Body"/> property will be <c>null</c> if the <paramref name="uri"/> points to a directory instead of a file</remarks>
-        Task<IApiResponse<Stream>> GetRawStream(Uri uri, IDictionary<string, string> parameters);
 
         /// <summary>
         /// Performs an asynchronous HTTP GET request.
@@ -91,20 +71,6 @@ namespace Octokit
         /// </summary>
         /// <typeparam name="T">The type to map the response to</typeparam>
         /// <param name="uri">URI endpoint to send request to</param>
-        /// <param name="parameters">Querystring parameters for the request</param>
-        /// <param name="accepts">Specifies accepted response media types.</param>
-        /// <param name="cancellationToken">A token used to cancel the Get request</param>
-        /// <param name="preprocessResponseBody">Function to preprocess HTTP response prior to deserialization (can be null)</param>
-        /// <returns><seealso cref="IResponse"/> representing the received HTTP response</returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords", MessageId = "Get")]
-        Task<IApiResponse<T>> Get<T>(Uri uri, IDictionary<string, string> parameters, string accepts, CancellationToken cancellationToken, Func<object, object> preprocessResponseBody);
-
-        /// <summary>
-        /// Performs an asynchronous HTTP GET request.
-        /// Attempts to map the response to an object of type <typeparamref name="T"/>
-        /// </summary>
-        /// <typeparam name="T">The type to map the response to</typeparam>
-        /// <param name="uri">URI endpoint to send request to</param>
         /// <param name="timeout">Expiration time of the request</param>
         /// <returns><seealso cref="IResponse"/> representing the received HTTP response</returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords", MessageId = "Get")]
@@ -121,26 +87,9 @@ namespace Octokit
         /// Performs an asynchronous HTTP PATCH request.
         /// </summary>
         /// <param name="uri">URI endpoint to send request to</param>
-        /// <param name="body">The object to serialize as the body of the request</param>
-        /// <returns><seealso cref="IResponse"/> representing the received HTTP response</returns>
-        Task<HttpStatusCode> Patch(Uri uri, object body);
-
-        /// <summary>
-        /// Performs an asynchronous HTTP PATCH request.
-        /// </summary>
-        /// <param name="uri">URI endpoint to send request to</param>
         /// <param name="accepts">Specifies accepted response media types.</param>
         /// <returns><seealso cref="IResponse"/> representing the received HTTP response</returns>
         Task<HttpStatusCode> Patch(Uri uri, string accepts);
-
-        /// <summary>
-        /// Performs an asynchronous HTTP PATCH request.
-        /// </summary>
-        /// <param name="uri">URI endpoint to send request to</param>
-        /// <param name="body">The object to serialize as the body of the request</param>
-        /// <param name="accepts">Specifies accept response media type</param>
-        /// <returns><seealso cref="IResponse"/> representing the received HTTP response</returns>
-        Task<HttpStatusCode> Patch(Uri uri, object body, string accepts);
 
         /// <summary>
         /// Performs an asynchronous HTTP PATCH request.

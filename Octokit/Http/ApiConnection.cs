@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -93,24 +92,6 @@ namespace Octokit
         }
 
         /// <summary>
-        /// Gets the API resource at the specified URI.
-        /// </summary>
-        /// <typeparam name="T">Type of the API resource to get.</typeparam>
-        /// <param name="uri">URI of the API resource to get</param>
-        /// <param name="parameters">Parameters to add to the API request</param>
-        /// <param name="accepts">Accept header to use for the API request</param>
-        /// <param name="preprocessResponseBody">Function to preprocess HTTP response prior to deserialization (can be null)</param>
-        /// <returns>The API resource.</returns>
-        /// <exception cref="ApiException">Thrown when an API error occurs.</exception>
-        public async Task<T> Get<T>(Uri uri, IDictionary<string, string> parameters, string accepts, Func<object, object> preprocessResponseBody)
-        {
-            Ensure.ArgumentNotNull(uri, nameof(uri));
-
-            var response = await Connection.Get<T>(uri, parameters, accepts, CancellationToken.None, preprocessResponseBody).ConfigureAwait(false);
-            return response.Body;
-        }
-
-        /// <summary>
         /// Gets the HTML content of the API resource at the specified URI.
         /// </summary>
         /// <param name="uri">URI of the API resource to get</param>
@@ -137,15 +118,6 @@ namespace Octokit
             Ensure.ArgumentNotNull(uri, nameof(uri));
 
             var response = await Connection.GetRaw(uri, parameters).ConfigureAwait(false);
-            return response.Body;
-        }
-        
-        /// <inheritdoc/>
-        public async Task<Stream> GetRawStream(Uri uri, IDictionary<string, string> parameters)
-        {
-            Ensure.ArgumentNotNull(uri, nameof(uri));
-
-            var response = await Connection.GetRawStream(uri, parameters).ConfigureAwait(false);
             return response.Body;
         }
 
@@ -238,16 +210,6 @@ namespace Octokit
             parameters = Pagination.Setup(parameters, options);
 
             return _pagination.GetAllPages(async () => await GetPage<T>(uri, parameters, accepts, options).ConfigureAwait(false), uri);
-        }
-
-        public Task<IReadOnlyList<T>> GetAll<T>(Uri uri, IDictionary<string, string> parameters, string accepts, ApiOptions options, Func<object, object> preprocessResponseBody)
-        {
-            Ensure.ArgumentNotNull(uri, nameof(uri));
-            Ensure.ArgumentNotNull(options, nameof(options));
-
-            parameters = Pagination.Setup(parameters, options);
-
-            return _pagination.GetAllPages(async () => await GetPage<T>(uri, parameters, accepts, options, preprocessResponseBody).ConfigureAwait(false), uri);
         }
 
         /// <summary>
@@ -464,20 +426,6 @@ namespace Octokit
         /// Updates the API resource at the specified URI.
         /// </summary>
         /// <param name="uri">URI of the API resource to patch</param>
-        /// <param name="data">Object that describes the API resource; this will be serialized and used as the request's body</param>
-        /// <returns>A <see cref="Task"/> for the request's execution.</returns>
-        public Task Patch(Uri uri, object data)
-        {
-            Ensure.ArgumentNotNull(uri, nameof(uri));
-            Ensure.ArgumentNotNull(data, nameof(data));
-
-            return Connection.Patch(uri, data);
-        }
-
-        /// <summary>
-        /// Updates the API resource at the specified URI.
-        /// </summary>
-        /// <param name="uri">URI of the API resource to patch</param>
         /// <param name="accepts">Accept header to use for the API request</param>
         /// <returns>A <see cref="Task"/> for the request's execution.</returns>
         public Task Patch(Uri uri, string accepts)
@@ -486,22 +434,6 @@ namespace Octokit
             Ensure.ArgumentNotNull(accepts, nameof(accepts));
 
             return Connection.Patch(uri, accepts);
-        }
-
-        /// <summary>
-        /// Updates the API resource at the specified URI.
-        /// </summary>
-        /// <param name="uri">URI of the API resource to patch</param>
-        /// <param name="data">Object that describes the API resource; this will be serialized and used as the request's body</param>
-        /// <param name="accepts">Accept header to use for the API request</param>
-        /// <returns>A <see cref="Task"/> for the request's execution.</returns>
-        public Task Patch(Uri uri, object data, string accepts)
-        {
-            Ensure.ArgumentNotNull(uri, nameof(uri));
-            Ensure.ArgumentNotNull(data, nameof(data));
-            Ensure.ArgumentNotNull(accepts, nameof(accepts));
-
-            return Connection.Patch(uri, data, accepts);
         }
 
         /// <summary>
@@ -687,29 +619,27 @@ namespace Octokit
         async Task<IReadOnlyPagedCollection<T>> GetPage<T>(
             Uri uri,
             IDictionary<string, string> parameters,
-            string accepts,
-            Func<object, object> preprocessResponseBody = null)
+            string accepts)
         {
             Ensure.ArgumentNotNull(uri, nameof(uri));
 
-            var response = await Connection.Get<List<T>>(uri, parameters, accepts, CancellationToken.None, preprocessResponseBody).ConfigureAwait(false);
+            var response = await Connection.Get<List<T>>(uri, parameters, accepts).ConfigureAwait(false);
             return new ReadOnlyPagedCollection<T>(
                 response,
-                nextPageUri => Connection.Get<List<T>>(nextPageUri, parameters, accepts, CancellationToken.None, preprocessResponseBody));
+                nextPageUri => Connection.Get<List<T>>(nextPageUri, parameters, accepts));
         }
 
         async Task<IReadOnlyPagedCollection<TU>> GetPage<TU>(
             Uri uri,
             IDictionary<string, string> parameters,
             string accepts,
-            ApiOptions options,
-            Func<object, object> preprocessResponseBody = null)
+            ApiOptions options)
         {
             Ensure.ArgumentNotNull(uri, nameof(uri));
 
             var connection = Connection;
 
-            var response = await connection.Get<List<TU>>(uri, parameters, accepts, CancellationToken.None, preprocessResponseBody).ConfigureAwait(false);
+            var response = await connection.Get<List<TU>>(uri, parameters, accepts).ConfigureAwait(false);
             return new ReadOnlyPagedCollection<TU>(
                 response,
                 nextPageUri =>
@@ -719,7 +649,7 @@ namespace Octokit
                         options);
 
                     return shouldContinue
-                        ? connection.Get<List<TU>>(nextPageUri, parameters, accepts, CancellationToken.None, preprocessResponseBody)
+                        ? connection.Get<List<TU>>(nextPageUri, parameters, accepts)
                         : null;
                 });
         }
