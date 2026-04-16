@@ -296,12 +296,120 @@ namespace Octokit.Internal
                 SimpleJson.RegisterAotType(typeof(Octokit.Committer), () =>new Octokit.Committer());              
                 SimpleJson.RegisterAotType(typeof(Octokit.CheckSuitePreferenceAutoTrigger), () =>new Octokit.CheckSuitePreferenceAutoTrigger());
                 SimpleJson.RegisterAotType(typeof(Octokit.CheckSuitePreferences), () => new Octokit.CheckSuitePreferences());
-                                       
+
+                // 注册 List<T> 集合类型（AOT 环境下 MakeGenericType 不可用，必须预注册）
+                RegisterListTypes();
             }
             catch
             {
                 // 忽略注册失败
             }
+        }
+
+        private static void RegisterListTypes()
+        {
+            // 基元类型 List
+            SimpleJson.RegisterAotType(typeof(List<string>), () => new List<string>());
+            SimpleJson.RegisterAotType(typeof(List<int>), () => new List<int>());
+            SimpleJson.RegisterAotType(typeof(List<long>), () => new List<long>());
+
+            // Octokit 模型 List
+            SimpleJson.RegisterAotType(typeof(List<Octokit.Repository>), () => new List<Octokit.Repository>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.User>), () => new List<Octokit.User>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.Issue>), () => new List<Octokit.Issue>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.PullRequest>), () => new List<Octokit.PullRequest>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.Branch>), () => new List<Octokit.Branch>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.Commit>), () => new List<Octokit.Commit>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.Label>), () => new List<Octokit.Label>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.Milestone>), () => new List<Octokit.Milestone>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.Team>), () => new List<Octokit.Team>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.Organization>), () => new List<Octokit.Organization>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.Release>), () => new List<Octokit.Release>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.ReleaseAsset>), () => new List<Octokit.ReleaseAsset>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.Activity>), () => new List<Octokit.Activity>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.EventInfo>), () => new List<Octokit.EventInfo>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.IssueComment>), () => new List<Octokit.IssueComment>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.CommitComment>), () => new List<Octokit.CommitComment>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.PullRequestReviewComment>), () => new List<Octokit.PullRequestReviewComment>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.GistComment>), () => new List<Octokit.GistComment>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.CheckRun>), () => new List<Octokit.CheckRun>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.CheckSuite>), () => new List<Octokit.CheckSuite>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.CheckRunAnnotation>), () => new List<Octokit.CheckRunAnnotation>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.CommitStatus>), () => new List<Octokit.CommitStatus>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.Deployment>), () => new List<Octokit.Deployment>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.DeploymentStatus>), () => new List<Octokit.DeploymentStatus>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.Models.Response.DeploymentEnvironment>), () => new List<Octokit.Models.Response.DeploymentEnvironment>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.EnvironmentApproval>), () => new List<Octokit.EnvironmentApproval>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.IssueEvent>), () => new List<Octokit.IssueEvent>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.Notification>), () => new List<Octokit.Notification>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.Gist>), () => new List<Octokit.Gist>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.GistFile>), () => new List<Octokit.GistFile>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.GistFork>), () => new List<Octokit.GistFork>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.GistHistory>), () => new List<Octokit.GistHistory>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.GitReference>), () => new List<Octokit.GitReference>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.GitHubCommit>), () => new List<Octokit.GitHubCommit>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.GitHubCommitFile>), () => new List<Octokit.GitHubCommitFile>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.Reference>), () => new List<Octokit.Reference>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.TreeItem>), () => new List<Octokit.TreeItem>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.RepositoryContent>), () => new List<Octokit.RepositoryContent>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.RepositoryHook>), () => new List<Octokit.RepositoryHook>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.RepositoryTag>), () => new List<Octokit.RepositoryTag>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.RepositoryContributor>), () => new List<Octokit.RepositoryContributor>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.RepositoryInvitation>), () => new List<Octokit.RepositoryInvitation>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.DeployKey>), () => new List<Octokit.DeployKey>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.Reaction>), () => new List<Octokit.Reaction>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.PullRequestReview>), () => new List<Octokit.PullRequestReview>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.PullRequestFile>), () => new List<Octokit.PullRequestFile>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.PullRequestCommit>), () => new List<Octokit.PullRequestCommit>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.EmailAddress>), () => new List<Octokit.EmailAddress>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.GpgKey>), () => new List<Octokit.GpgKey>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.PublicKey>), () => new List<Octokit.PublicKey>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.Workflow>), () => new List<Octokit.Workflow>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.WorkflowRun>), () => new List<Octokit.WorkflowRun>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.WorkflowJob>), () => new List<Octokit.WorkflowJob>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.WorkflowJobStep>), () => new List<Octokit.WorkflowJobStep>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.WorkflowReference>), () => new List<Octokit.WorkflowReference>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.WorkflowRunTiming>), () => new List<Octokit.WorkflowRunTiming>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.WeeklyCommitActivity>), () => new List<Octokit.WeeklyCommitActivity>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.WeeklyHash>), () => new List<Octokit.WeeklyHash>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.AdditionsAndDeletions>), () => new List<Octokit.AdditionsAndDeletions>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.PunchCardPoint>), () => new List<Octokit.PunchCardPoint>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.Contributor>), () => new List<Octokit.Contributor>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.SearchCode>), () => new List<Octokit.SearchCode>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.ApiErrorDetail>), () => new List<Octokit.ApiErrorDetail>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.Installation>), () => new List<Octokit.Installation>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.OrganizationMembership>), () => new List<Octokit.OrganizationMembership>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.OrganizationHook>), () => new List<Octokit.OrganizationHook>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.OrganizationSecret>), () => new List<Octokit.OrganizationSecret>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.RepositorySecret>), () => new List<Octokit.RepositorySecret>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.Copilot.CopilotSeat>), () => new List<Octokit.Copilot.CopilotSeat>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.PushWebhookCommit>), () => new List<Octokit.PushWebhookCommit>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.RepositoryCodeOwnersErrors.RepositoryCodeOwnersError>), () => new List<Octokit.RepositoryCodeOwnersErrors.RepositoryCodeOwnersError>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.RepositoryTrafficClone>), () => new List<Octokit.RepositoryTrafficClone>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.RepositoryTrafficView>), () => new List<Octokit.RepositoryTrafficView>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.Project>), () => new List<Octokit.Project>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.ProjectCard>), () => new List<Octokit.ProjectCard>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.ProjectColumn>), () => new List<Octokit.ProjectColumn>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.Migration>), () => new List<Octokit.Migration>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.Page>), () => new List<Octokit.Page>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.PagesBuild>), () => new List<Octokit.PagesBuild>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.Package>), () => new List<Octokit.Package>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.PackageVersion>), () => new List<Octokit.PackageVersion>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.CommitPullRequest>), () => new List<Octokit.CommitPullRequest>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.AuditLogEvent>), () => new List<Octokit.AuditLogEvent>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.BranchProtectionRule>), () => new List<Octokit.BranchProtectionRule>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.TeamMembershipDetails>), () => new List<Octokit.TeamMembershipDetails>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.TeamRepository>), () => new List<Octokit.TeamRepository>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.CollaboratorPermission>), () => new List<Octokit.CollaboratorPermission>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.RequestedReviews>), () => new List<Octokit.RequestedReviews>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.DismissedReviewInfo>), () => new List<Octokit.DismissedReviewInfo>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.IssueEventProjectCard>), () => new List<Octokit.IssueEventProjectCard>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.CheckSuitePreferenceAutoTrigger>), () => new List<Octokit.CheckSuitePreferenceAutoTrigger>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.RepositoryTrafficPath>), () => new List<Octokit.RepositoryTrafficPath>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.RepositoryTrafficReferrer>), () => new List<Octokit.RepositoryTrafficReferrer>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.MaintenanceModeActiveProcesses>), () => new List<Octokit.MaintenanceModeActiveProcesses>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.CheckRunRequestedAction>), () => new List<Octokit.CheckRunRequestedAction>());
+            SimpleJson.RegisterAotType(typeof(List<Octokit.CheckRunOutputResponse>), () => new List<Octokit.CheckRunOutputResponse>());
         }
         static void ResisterEnumTypes() {
             // 标记枚举类型防止 AOT 裁剪，确保枚举值在 AOT 编译中可用
