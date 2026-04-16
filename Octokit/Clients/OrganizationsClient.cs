@@ -23,7 +23,7 @@ namespace Octokit
             Hook = new OrganizationHooksClient(apiConnection);
             OutsideCollaborator = new OrganizationOutsideCollaboratorsClient(apiConnection);
             Actions = new OrganizationActionsClient(apiConnection);
-            CustomProperty = new OrganizationCustomPropertiesClient(apiConnection);
+            Copilot = new CopilotClient(apiConnection);
         }
 
         /// <summary>
@@ -41,15 +41,12 @@ namespace Octokit
         /// </summary>
         public IOrganizationActionsClient Actions { get; private set; }
 
+        public ICopilotClient Copilot { get; }
+
         /// <summary>
         /// Returns a client to manage outside collaborators of an organization.
         /// </summary>
         public IOrganizationOutsideCollaboratorsClient OutsideCollaborator { get; private set; }
-
-        /// <summary>
-        /// Returns a client to manage organization custom properties.
-        /// </summary>
-        public IOrganizationCustomPropertiesClient CustomProperty { get; private set; }
 
         /// <summary>
         /// Returns the specified <see cref="Organization"/>.
