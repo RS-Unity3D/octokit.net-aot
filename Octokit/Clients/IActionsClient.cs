@@ -18,12 +18,6 @@
         /// </summary>
         IActionsCacheClient Cache { get; }
 
-
-        /// <summary>
-        /// Client for the OIDC API.
-        /// </summary>
-        IActionsOidcClient Oidc { get; }
-
         /// <summary>
         /// Client for the Permissions API.
         /// </summary>
