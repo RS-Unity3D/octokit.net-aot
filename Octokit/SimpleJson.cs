@@ -52,6 +52,7 @@
 using System;
 using System.CodeDom.Compiler;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -792,18 +793,15 @@ namespace Octokit
             return null;
         }
 
-        internal static string ParseString(char[] json, ref int index, ref bool success)
+        static string ParseString(char[] json, ref int index, ref bool success)
         {
-            // Avoid allocating this StringBuilder unless a backslash is encountered in the json
-            StringBuilder s = null;
+            StringBuilder s = new StringBuilder(BUILDER_CAPACITY);
             char c;
 
             EatWhitespace(json, ref index);
 
             // "
             c = json[index++];
-
-            int startIndex = index;
             bool complete = false;
             while (!complete)
             {
@@ -818,13 +816,6 @@ namespace Octokit
                 }
                 else if (c == '\\')
                 {
-                    if (s == null)
-                    {
-                        s = new StringBuilder(BUILDER_CAPACITY);
-                        for (int i = startIndex; i < index - 1; i++)
-                            s.Append(json[i]);
-                    }
-
                     if (index == json.Length)
                         break;
                     c = json[index++];
@@ -885,21 +876,14 @@ namespace Octokit
                     }
                 }
                 else
-                {
-                    if (s != null)
-                        s.Append(c);
-                }
+                    s.Append(c);
             }
             if (!complete)
             {
                 success = false;
                 return null;
             }
-
-            if (s != null)
-                return s.ToString();
-
-            return new string(json, startIndex, index - startIndex - 1);
+            return s.ToString();
         }
 
         private static string ConvertFromUtf32(int utf32)
@@ -1439,9 +1423,7 @@ namespace Octokit
             bool valueIsDouble = value is double;
             if ((valueIsLong && type == typeof(long)) || (valueIsDouble && type == typeof(double)))
                 return value;
-            if (valueIsLong && type == typeof(IReadOnlyList<long>))
-                obj = new long[] { (long)value };
-            else if ((valueIsDouble && type != typeof(double)) || (valueIsLong && type != typeof(long)))
+            if ((valueIsDouble && type != typeof(double)) || (valueIsLong && type != typeof(long)))
             {
                 if (valueIsLong && (type == typeof(DateTimeOffset) || type == typeof(DateTimeOffset?)))
                 {
@@ -1455,8 +1437,6 @@ namespace Octokit
                             ? Convert.ChangeType(value, type, CultureInfo.InvariantCulture)
                             : value;
             }
-            else if (type == typeof(object) || (ReflectionUtils.IsNullableType(type) && Nullable.GetUnderlyingType(type) == typeof(object)))
-                obj = value;
             else
             {
                 IDictionary<string, object> objects = value as IDictionary<string, object>;
@@ -1500,15 +1480,29 @@ namespace Octokit
                             obj = value;
                         else
                         {
-                            obj = ConstructorCache[type]();
-                            foreach (KeyValuePair<string, KeyValuePair<Type, ReflectionUtils.SetDelegate>> setter in SetCache[type])
+                            try
                             {
-                                object jsonValue;
-                                if (jsonObject.TryGetValue(setter.Key, out jsonValue))
+                                obj = ConstructorCache[type]();
+                                foreach (KeyValuePair<string, KeyValuePair<Type, ReflectionUtils.SetDelegate>> setter in SetCache[type])
                                 {
-                                    jsonValue = DeserializeObject(jsonValue, setter.Value.Key);
-                                    setter.Value.Value(obj, jsonValue);
+                                    object jsonValue;
+                                    if (jsonObject.TryGetValue(setter.Key, out jsonValue))
+                                    {
+                                        jsonValue = DeserializeObject(jsonValue, setter.Value.Key);
+                                        try
+                                        {
+                                            setter.Value.Value(obj, jsonValue);
+                                        }
+                                        catch (Exception e)
+                                        {
+                                            Console.WriteLine($"Failed to set value '{jsonValue}' to property '{setter.Key}' of type '{setter.Value.Key}' for type '{type}' - {e.Message}");
+                                        }
+                                    }
                                 }
+                            }
+                            catch (Exception e)
+                            {
+                                Console.WriteLine($"Failed to create instance of type '{type}' - {e.Message}'");
                             }
                         }
                     }
@@ -2123,7 +2117,7 @@ namespace Octokit
             {
                 private readonly object _lock = new object();
                 private readonly ThreadSafeDictionaryValueFactory<TKey, TValue> _valueFactory;
-                private Dictionary<TKey, TValue> _dictionary;
+                private ConcurrentDictionary<TKey, TValue> _dictionary;
 
                 public ThreadSafeDictionary(ThreadSafeDictionaryValueFactory<TKey, TValue> valueFactory)
                 {
@@ -2147,7 +2141,7 @@ namespace Octokit
                     {
                         if (_dictionary == null)
                         {
-                            _dictionary = new Dictionary<TKey, TValue>();
+                            _dictionary = new ConcurrentDictionary<TKey, TValue>();
                             _dictionary[key] = value;
                         }
                         else
@@ -2155,7 +2149,7 @@ namespace Octokit
                             TValue val;
                             if (_dictionary.TryGetValue(key, out val))
                                 return val;
-                            Dictionary<TKey, TValue> dict = new Dictionary<TKey, TValue>(_dictionary);
+                            var dict = new ConcurrentDictionary<TKey, TValue>(_dictionary);
                             dict[key] = value;
                             _dictionary = dict;
                         }
