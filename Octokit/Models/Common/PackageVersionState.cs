@@ -11,7 +11,7 @@ namespace Octokit
         Active,
         
         /// <summary>
-        /// Package version which is deleted
+        /// Package version whic is deleted
         /// </summary>
         [Parameter(Value = "deleted")]
         Deleted
