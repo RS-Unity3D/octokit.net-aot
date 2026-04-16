@@ -311,21 +311,6 @@ namespace Octokit
         Task<OrganizationMembership> AddOrUpdateOrganizationMembership(string org, string user, OrganizationMembershipUpdate addOrUpdateRequest);
 
         /// <summary>
-        /// Create an organization invitation for a user
-        /// </summary>
-        /// <remarks>
-        /// This method requires authentication.
-        /// The authenticated user must be an organization owner.
-        /// See the <a href="https://developer.github.com/v3/orgs/members/#create-an-organization-invitation">API documentation</a>
-        /// for more information.
-        /// </remarks>
-        /// <param name="org">The login for the organization</param>
-        /// <param name="invitationRequest">An <see cref="OrganizationInvitationRequest"/> instance containing the
-        /// details of the organization invitation</param>
-        /// <returns></returns>
-        Task<OrganizationMembershipInvitation> CreateOrganizationInvitation(string org, OrganizationInvitationRequest invitationRequest);
-
-        /// <summary>
         /// Remove a user's membership with an organization.
         /// </summary>
         /// <remarks>
@@ -384,41 +369,5 @@ namespace Octokit
         /// <param name="options">Options to change API behaviour</param>
         /// <returns></returns>
         Task<IReadOnlyList<OrganizationMembershipInvitation>> GetAllFailedInvitations(string org, ApiOptions options);
-
-        /// <summary>
-        /// Cancel an organization invitation. In order to cancel an organization invitation, the authenticated user must be an organization owner.
-        /// </summary>
-        /// <remarks>
-        /// See the <a href="https://docs.github.com/en/rest/orgs/members#cancel-an-organization-invitation">API Documentation</a>
-        /// for more information.
-        /// </remarks>
-        /// <param name="org">The login for the organization</param>
-        /// <param name="invitationId">The unique identifier of the invitation</param>
-        /// <returns></returns>
-        Task CancelOrganizationInvitation(string org, long invitationId);
-
-        /// <summary>
-        /// Returns all <see cref="OrganizationMembership" />s for the current user.
-        /// </summary>
-        /// <remarks>
-        /// See the <a href="https://docs.github.com/en/rest/orgs/members#list-organization-memberships-for-the-authenticated-user">API Documentation</a>
-        /// for more information.
-        /// </remarks>
-        /// <exception cref="ApiException">Thrown when a general API error occurs.</exception>
-        /// <returns>A list of the current user's <see cref="OrganizationMembership"/>s.</returns>
-        Task<IReadOnlyList<OrganizationMembership>> GetAllOrganizationMembershipsForCurrent();
-
-        /// <summary>
-        /// Returns all <see cref="OrganizationMembership" />s for the current user.
-        /// </summary>
-        /// <remarks>
-        /// See the <a href="https://docs.github.com/en/rest/orgs/members#list-organization-memberships-for-the-authenticated-user">API Documentation</a>
-        /// for more information.
-        /// </remarks>
-        /// <exception cref="ApiException">Thrown when a general API error occurs.</exception>
-        /// <param name="options">Options to change API behaviour</param>
-        /// <returns>A list of the current user's <see cref="OrganizationMembership"/>s.</returns>
-        Task<IReadOnlyList<OrganizationMembership>> GetAllOrganizationMembershipsForCurrent(ApiOptions options);
-
     }
 }

@@ -29,14 +29,6 @@ namespace Octokit
         IRepositoryActionsClient Actions { get; }
 
         /// <summary>
-        /// Client for managing Autolinks in a repository.
-        /// </summary>
-        /// <remarks>
-        ///  See the <a href="https://docs.github.com/en/rest/repos/autolinks">Repository Autolinks API documentation</a> for more information.
-        /// </remarks>
-        IAutolinksClient Autolinks { get; }
-
-        /// <summary>
         /// Client for managing branches in a repository.
         /// </summary>
         /// <remarks>
@@ -52,14 +44,6 @@ namespace Octokit
         /// See the <a href="http://developer.github.com/v3/repos/comments/">Repository Comments API documentation</a> for more information.
         /// </remarks>
         IRepositoryCommentsClient Comment { get; }
-
-        /// <summary>
-        /// Client for managing custom property values on a repository.
-        /// </summary>
-        /// <remarks>
-        /// See the <a href="https://docs.github.com/rest/repos/custom-properties">Repository Custom Properties API documentation</a> for more information.
-        /// </remarks>
-        IRepositoryCustomPropertiesClient CustomProperty { get; }
 
         /// <summary>
         /// Client for managing deploy keys in a repository.
