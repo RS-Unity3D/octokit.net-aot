@@ -17,14 +17,6 @@
         IEnterpriseAdminStatsClient AdminStats { get; }
 
         /// <summary>
-        /// A client for GitHub's Enterprise Audit Log API
-        /// </summary>
-        /// <remarks>
-        /// See the <a href="https://docs.github.com/en/enterprise-cloud@latest/rest/enterprise-admin/audit-log">Enterprise Audit Log API documentation</a> for more information.
-        /// </remarks>
-        IEnterpriseAuditLogClient AuditLog { get; }
-
-        /// <summary>
         /// A client for GitHub's Enterprise LDAP API
         /// </summary>
         /// <remarks>
