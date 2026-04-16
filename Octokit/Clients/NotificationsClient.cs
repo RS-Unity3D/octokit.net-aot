@@ -276,59 +276,59 @@ namespace Octokit
         /// <summary>
         /// Retrives a single <see cref="Notification"/> by Id.
         /// </summary>
-        /// <param name="threadId">The Id of the notification to retrieve.</param>
+        /// <param name="id">The Id of the notification to retrieve.</param>
         /// <remarks>http://developer.github.com/v3/activity/notifications/#view-a-single-thread</remarks>
         [ManualRoute("GET", "/notifications/threads/{thread_id}")]
-        public Task<Notification> Get(int threadId)
+        public Task<Notification> Get(int id)
         {
-            return ApiConnection.Get<Notification>(ApiUrls.Notification(threadId));
+            return ApiConnection.Get<Notification>(ApiUrls.Notification(id));
         }
 
         /// <summary>
         /// Marks a single notification as read.
         /// </summary>
-        /// <param name="threadId">The id of the notification.</param>
+        /// <param name="id">The id of the notification.</param>
         /// <remarks>http://developer.github.com/v3/activity/notifications/#mark-a-thread-as-read</remarks>
         [ManualRoute("PATCH", "/notifications/threads/{thread_id}")]
-        public Task MarkAsRead(int threadId)
+        public Task MarkAsRead(int id)
         {
-            return ApiConnection.Patch(ApiUrls.Notification(threadId));
+            return ApiConnection.Patch(ApiUrls.Notification(id));
         }
 
         /// <summary>
         /// Retrives a <see cref="ThreadSubscription"/> for the provided thread id.
         /// </summary>
-        /// <param name="threadId">The Id of the thread to retrieve subscription status.</param>
+        /// <param name="id">The Id of the thread to retrieve subscription status.</param>
         /// <remarks>http://developer.github.com/v3/activity/notifications/#get-a-thread-subscription</remarks>
         [ManualRoute("GET", "/notifications/threads/{thread_id}/subscription")]
-        public Task<ThreadSubscription> GetThreadSubscription(int threadId)
+        public Task<ThreadSubscription> GetThreadSubscription(int id)
         {
-            return ApiConnection.Get<ThreadSubscription>(ApiUrls.NotificationSubscription(threadId));
+            return ApiConnection.Get<ThreadSubscription>(ApiUrls.NotificationSubscription(id));
         }
 
         /// <summary>
         /// Sets the authenticated user's subscription settings for a given thread.
         /// </summary>
-        /// <param name="threadId">The Id of the thread to update.</param>
+        /// <param name="id">The Id of the thread to update.</param>
         /// <param name="threadSubscription">The subscription parameters to set.</param>
         /// <remarks>http://developer.github.com/v3/activity/notifications/#set-a-thread-subscription</remarks>
         [ManualRoute("PUT", "/notifications/threads/{thread_id}/subscription")]
-        public Task<ThreadSubscription> SetThreadSubscription(int threadId, NewThreadSubscription threadSubscription)
+        public Task<ThreadSubscription> SetThreadSubscription(int id, NewThreadSubscription threadSubscription)
         {
             Ensure.ArgumentNotNull(threadSubscription, nameof(threadSubscription));
 
-            return ApiConnection.Put<ThreadSubscription>(ApiUrls.NotificationSubscription(threadId), threadSubscription);
+            return ApiConnection.Put<ThreadSubscription>(ApiUrls.NotificationSubscription(id), threadSubscription);
         }
 
         /// <summary>
         /// Deletes the authenticated user's subscription to a given thread.
         /// </summary>
-        /// <param name="threadId">The Id of the thread to delete subscription from.</param>
+        /// <param name="id">The Id of the thread to delete subscription from.</param>
         /// <remarks>http://developer.github.com/v3/activity/notifications/#delete-a-thread-subscription</remarks>
         [ManualRoute("DELETE", "/notifications/threads/{thread_id}/subscription")]
-        public Task DeleteThreadSubscription(int threadId)
+        public Task DeleteThreadSubscription(int id)
         {
-            return ApiConnection.Delete(ApiUrls.NotificationSubscription(threadId));
+            return ApiConnection.Delete(ApiUrls.NotificationSubscription(id));
         }
     }
 }
