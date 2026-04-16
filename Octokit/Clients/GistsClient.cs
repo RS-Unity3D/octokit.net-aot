@@ -30,11 +30,11 @@ namespace Octokit
         /// <remarks>
         /// http://developer.github.com/v3/gists/#get-a-single-gist
         /// </remarks>
-        /// <param name="gistId">The id of the gist</param>
+        /// <param name="id">The id of the gist</param>
         [ManualRoute("GET", "/gists/{gist_id}")]
-        public Task<Gist> Get(string gistId)
+        public Task<Gist> Get(string id)
         {
-            return ApiConnection.Get<Gist>(ApiUrls.Gist(gistId));
+            return ApiConnection.Get<Gist>(ApiUrls.Gist(id));
         }
 
         /// <summary>
@@ -74,11 +74,11 @@ namespace Octokit
         /// <remarks>
         /// http://developer.github.com/v3/gists/#fork-a-gist
         /// </remarks>
-        /// <param name="gistId">The id of the gist to fork</param>
+        /// <param name="id">The id of the gist to fork</param>
         [ManualRoute("POST", "/gists/{gist_id}/forks")]
-        public Task<Gist> Fork(string gistId)
+        public Task<Gist> Fork(string id)
         {
-            return ApiConnection.Post<Gist>(ApiUrls.ForkGist(gistId), new object());
+            return ApiConnection.Post<Gist>(ApiUrls.ForkGist(id), new object());
         }
 
         /// <summary>
@@ -87,13 +87,13 @@ namespace Octokit
         /// <remarks>
         /// http://developer.github.com/v3/gists/#delete-a-gist
         /// </remarks>
-        /// <param name="gistId">The id of the gist</param>
+        /// <param name="id">The id of the gist</param>
         [ManualRoute("DELETE", "/gists/{gist_id}")]
-        public Task Delete(string gistId)
+        public Task Delete(string id)
         {
-            Ensure.ArgumentNotNullOrEmptyString(gistId, nameof(gistId));
+            Ensure.ArgumentNotNullOrEmptyString(id, nameof(id));
 
-            return ApiConnection.Delete(ApiUrls.Gist(gistId));
+            return ApiConnection.Delete(ApiUrls.Gist(id));
         }
 
         /// <summary>
@@ -344,13 +344,13 @@ namespace Octokit
         /// <remarks>
         /// http://developer.github.com/v3/gists/#list-gists-commits
         /// </remarks>
-        /// <param name="gistId">The id of the gist</param>
+        /// <param name="id">The id of the gist</param>
         [ManualRoute("GET", "/gists/{gist_id}/commits")]
-        public Task<IReadOnlyList<GistHistory>> GetAllCommits(string gistId)
+        public Task<IReadOnlyList<GistHistory>> GetAllCommits(string id)
         {
-            Ensure.ArgumentNotNullOrEmptyString(gistId, nameof(gistId));
+            Ensure.ArgumentNotNullOrEmptyString(id, nameof(id));
 
-            return GetAllCommits(gistId, ApiOptions.None);
+            return GetAllCommits(id, ApiOptions.None);
         }
 
         /// <summary>
@@ -359,15 +359,15 @@ namespace Octokit
         /// <remarks>
         /// http://developer.github.com/v3/gists/#list-gists-commits
         /// </remarks>
-        /// <param name="gistId">The id of the gist</param>
+        /// <param name="id">The id of the gist</param>
         /// <param name="options">Options for changing the API response</param>
         [ManualRoute("GET", "/gists/{gist_id}/commits")]
-        public Task<IReadOnlyList<GistHistory>> GetAllCommits(string gistId, ApiOptions options)
+        public Task<IReadOnlyList<GistHistory>> GetAllCommits(string id, ApiOptions options)
         {
-            Ensure.ArgumentNotNullOrEmptyString(gistId, nameof(gistId));
+            Ensure.ArgumentNotNullOrEmptyString(id, nameof(id));
             Ensure.ArgumentNotNull(options, nameof(options));
 
-            return ApiConnection.GetAll<GistHistory>(ApiUrls.GistCommits(gistId), options);
+            return ApiConnection.GetAll<GistHistory>(ApiUrls.GistCommits(id), options);
         }
 
         /// <summary>
@@ -376,13 +376,13 @@ namespace Octokit
         /// <remarks>
         /// http://developer.github.com/v3/gists/#list-gists-forks
         /// </remarks>
-        /// <param name="gistId">The id of the gist</param>
+        /// <param name="id">The id of the gist</param>
         [ManualRoute("GET", "/gists/{gist_id}/forks")]
-        public Task<IReadOnlyList<GistFork>> GetAllForks(string gistId)
+        public Task<IReadOnlyList<GistFork>> GetAllForks(string id)
         {
-            Ensure.ArgumentNotNullOrEmptyString(gistId, nameof(gistId));
+            Ensure.ArgumentNotNullOrEmptyString(id, nameof(id));
 
-            return GetAllForks(gistId, ApiOptions.None);
+            return GetAllForks(id, ApiOptions.None);
         }
 
         /// <summary>
@@ -391,15 +391,15 @@ namespace Octokit
         /// <remarks>
         /// http://developer.github.com/v3/gists/#list-gists-forks
         /// </remarks>
-        /// <param name="gistId">The id of the gist</param>
+        /// <param name="id">The id of the gist</param>
         /// <param name="options">Options for changing the API response</param>
         [ManualRoute("GET", "/gists/{gist_id}/forks")]
-        public Task<IReadOnlyList<GistFork>> GetAllForks(string gistId, ApiOptions options)
+        public Task<IReadOnlyList<GistFork>> GetAllForks(string id, ApiOptions options)
         {
-            Ensure.ArgumentNotNullOrEmptyString(gistId, nameof(gistId));
+            Ensure.ArgumentNotNullOrEmptyString(id, nameof(id));
             Ensure.ArgumentNotNull(options, nameof(options));
 
-            return ApiConnection.GetAll<GistFork>(ApiUrls.ForkGist(gistId), options);
+            return ApiConnection.GetAll<GistFork>(ApiUrls.ForkGist(id), options);
         }
 
         /// <summary>
@@ -408,12 +408,12 @@ namespace Octokit
         /// <remarks>
         /// http://developer.github.com/v3/gists/#delete-a-gist
         /// </remarks>
-        /// <param name="gistId">The id of the gist</param>
+        /// <param name="id">The id of the gist</param>
         /// <param name="gistUpdate">The update to the gist</param>
         [ManualRoute("PATCH", "/gists/{gist_id}")]
-        public Task<Gist> Edit(string gistId, GistUpdate gistUpdate)
+        public Task<Gist> Edit(string id, GistUpdate gistUpdate)
         {
-            Ensure.ArgumentNotNullOrEmptyString(gistId, nameof(gistId));
+            Ensure.ArgumentNotNullOrEmptyString(id, nameof(id));
             Ensure.ArgumentNotNull(gistUpdate, nameof(gistUpdate));
 
             var filesAsJsonObject = new JsonObject();
@@ -428,7 +428,7 @@ namespace Octokit
                 Files = filesAsJsonObject
             };
 
-            return ApiConnection.Patch<Gist>(ApiUrls.Gist(gistId), gist);
+            return ApiConnection.Patch<Gist>(ApiUrls.Gist(id), gist);
         }
 
         /// <summary>
@@ -437,13 +437,13 @@ namespace Octokit
         /// <remarks>
         /// http://developer.github.com/v3/gists/#star-a-gist
         /// </remarks>
-        /// <param name="gistId">The id of the gist</param>
+        /// <param name="id">The id of the gist</param>
         [ManualRoute("PUT", "/gists/{gist_id}/star")]
-        public Task Star(string gistId)
+        public Task Star(string id)
         {
-            Ensure.ArgumentNotNullOrEmptyString(gistId, nameof(gistId));
+            Ensure.ArgumentNotNullOrEmptyString(id, nameof(id));
 
-            return ApiConnection.Put(ApiUrls.StarGist(gistId));
+            return ApiConnection.Put(ApiUrls.StarGist(id));
         }
 
         /// <summary>
@@ -452,13 +452,13 @@ namespace Octokit
         /// <remarks>
         /// http://developer.github.com/v3/gists/#unstar-a-gist
         /// </remarks>
-        /// <param name="gistId">The id of the gist</param>
+        /// <param name="id">The id of the gist</param>
         [ManualRoute("DELETE", "/gists/{gist_id}/star")]
-        public Task Unstar(string gistId)
+        public Task Unstar(string id)
         {
-            Ensure.ArgumentNotNullOrEmptyString(gistId, nameof(gistId));
+            Ensure.ArgumentNotNullOrEmptyString(id, nameof(id));
 
-            return ApiConnection.Delete(ApiUrls.StarGist(gistId));
+            return ApiConnection.Delete(ApiUrls.StarGist(id));
         }
 
         /// <summary>
@@ -467,15 +467,15 @@ namespace Octokit
         /// <remarks>
         /// http://developer.github.com/v3/gists/#check-if-a-gist-is-starred
         /// </remarks>
-        /// <param name="gistId">The id of the gist</param>
+        /// <param name="id">The id of the gist</param>
         [ManualRoute("GET", "/gists/{gist_id}/star")]
-        public async Task<bool> IsStarred(string gistId)
+        public async Task<bool> IsStarred(string id)
         {
-            Ensure.ArgumentNotNullOrEmptyString(gistId, nameof(gistId));
+            Ensure.ArgumentNotNullOrEmptyString(id, nameof(id));
 
             try
             {
-                var response = await Connection.Get<object>(ApiUrls.StarGist(gistId), null, null).ConfigureAwait(false);
+                var response = await Connection.Get<object>(ApiUrls.StarGist(id), null, null).ConfigureAwait(false);
                 return response.HttpResponse.IsTrue();
             }
             catch (NotFoundException)
