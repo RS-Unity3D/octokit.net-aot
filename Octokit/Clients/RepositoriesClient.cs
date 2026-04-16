@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using System.Diagnostics.CodeAnalysis;
 using System.Collections.Generic;
 using System.Net.Http.Headers;
-using Octokit.Clients;
 
 namespace Octokit
 {
@@ -33,7 +32,6 @@ namespace Octokit
             PullRequest = new PullRequestsClient(apiConnection);
             Comment = new RepositoryCommentsClient(apiConnection);
             Commit = new RepositoryCommitsClient(apiConnection);
-            CustomProperty = new RepositoryCustomPropertiesClient(apiConnection);
             Release = new ReleasesClient(apiConnection);
             DeployKeys = new RepositoryDeployKeysClient(apiConnection);
             Merging = new MergingClient(apiConnection);
@@ -44,8 +42,6 @@ namespace Octokit
             Traffic = new RepositoryTrafficClient(apiConnection);
             Project = new ProjectsClient(apiConnection);
             Actions = new RepositoryActionsClient(apiConnection);
-            Autolinks = new AutolinksClient(apiConnection);
-            
         }
 
         /// <summary>
@@ -569,14 +565,6 @@ namespace Octokit
         /// See the <a href="http://developer.github.com/v3/repos/commits/">Commits API documentation</a> for more details
         ///</remarks>
         public IRepositoryCommitsClient Commit { get; private set; }
-
-        /// <summary>
-        /// Client for GitHub's Repository Custom Property Values API.
-        /// </summary>
-        /// <remarks>
-        /// See the <a href="https://docs.github.com/rest/repos/custom-properties">Repository Custom Properties API documentation</a> for more details.
-        /// </remarks>
-        public IRepositoryCustomPropertiesClient CustomProperty { get; private set; }
 
         /// <summary>
         /// Access GitHub's Releases API.
@@ -1165,13 +1153,5 @@ namespace Octokit
         /// Refer to the API documentation for more information: https://developer.github.com/v3/repos/projects/
         /// </remarks>
         public IProjectsClient Project { get; private set; }
-
-        /// <summary>
-        /// Access GitHub's Repository Autolinks API
-        /// </summary>
-        /// <remarks>
-        /// Refer to the API documentation for more information: https://docs.github.com/en/rest/repos/autolinks
-        /// </remarks>
-        public IAutolinksClient Autolinks { get; private set; }
     }
 }
