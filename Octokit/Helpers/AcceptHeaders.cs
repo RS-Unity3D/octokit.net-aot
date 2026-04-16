@@ -15,7 +15,5 @@
         public const string RawContentMediaType = "application/vnd.github.v3.raw";
 
         public const string RepositoryContentMediaType = "application/vnd.github.v3.repository+json";
-
-        public const string StarJson = "application/vnd.github.v3.star+json";
     }
 }
