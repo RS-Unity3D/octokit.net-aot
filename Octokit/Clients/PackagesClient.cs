@@ -27,73 +27,16 @@ namespace Octokit
         /// </remarks>
         /// <param name="org">Required: Organisation Name</param>
         /// <param name="packageType">Required: The type of package</param>
-        [ManualRoute("GET", "/orgs/{org}/packages")]
-        public Task<IReadOnlyList<Package>> GetAllForOrg(string org, PackageType packageType)
-        {
-            Ensure.ArgumentNotNullOrEmptyString(org, nameof(org));
-            Ensure.ArgumentNotNull(packageType, nameof(packageType));
-
-            return GetAllForOrg(org, packageType, ApiOptions.None);
-        }
-
-        /// <summary>
-        /// List all packages for an organisations, readable by the current user
-        /// </summary>
-        /// <remarks>
-        /// See the <a href="https://docs.github.com/rest/packages#list-packages-for-an-organization">API documentation</a> for more details
-        /// </remarks>
-        /// <param name="org">Required: Organisation Name</param>
-        /// <param name="packageType">Required: The type of package</param>
-        /// <param name="options">Options for changing the API response</param>
-        [ManualRoute("GET", "/orgs/{org}/packages")]
-        public Task<IReadOnlyList<Package>> GetAllForOrg(string org, PackageType packageType, ApiOptions options)
-        {
-            Ensure.ArgumentNotNullOrEmptyString(org, nameof(org));
-            Ensure.ArgumentNotNull(packageType, nameof(packageType));
-            Ensure.ArgumentNotNull(options, nameof(options));
-
-            return GetAllForOrg(org, packageType, null, options);
-        }
-
-        /// <summary>
-        /// List all packages for an organisations, readable by the current user
-        /// </summary>
-        /// <remarks>
-        /// See the <a href="https://docs.github.com/rest/packages#list-packages-for-an-organization">API documentation</a> for more details
-        /// </remarks>
-        /// <param name="org">Required: Organisation Name</param>
-        /// <param name="packageType">Required: The type of package</param>
         /// <param name="packageVisibility">Optional: The visibility of the package</param>
         [ManualRoute("GET", "/orgs/{org}/packages")]
-        public Task<IReadOnlyList<Package>> GetAllForOrg(string org, PackageType packageType, PackageVisibility? packageVisibility)
+        public Task<IReadOnlyList<Package>> GetAllForOrg(string org, PackageType packageType, PackageVisibility? packageVisibility = null)
         {
             Ensure.ArgumentNotNullOrEmptyString(org, nameof(org));
-            Ensure.ArgumentNotNull(packageType, nameof(packageType));
-
-            return GetAllForOrg(org, packageType, packageVisibility, ApiOptions.None);
-        }
-
-        /// <summary>
-        /// List all packages for an organisations, readable by the current user
-        /// </summary>
-        /// <remarks>
-        /// See the <a href="https://docs.github.com/rest/packages#list-packages-for-an-organization">API documentation</a> for more details
-        /// </remarks>
-        /// <param name="org">Required: Organisation Name</param>
-        /// <param name="packageType">Required: The type of package</param>
-        /// <param name="packageVisibility">Optional: The visibility of the package</param>
-        /// <param name="options">Options for changing the API response</param>
-        [ManualRoute("GET", "/orgs/{org}/packages")]
-        public Task<IReadOnlyList<Package>> GetAllForOrg(string org, PackageType packageType, PackageVisibility? packageVisibility, ApiOptions options)
-        {
-            Ensure.ArgumentNotNullOrEmptyString(org, nameof(org));
-            Ensure.ArgumentNotNull(packageType, nameof(packageType));
-            Ensure.ArgumentNotNull(options, nameof(options));
 
             var route = ApiUrls.PackagesOrg(org);
             var parameters = ParameterBuilder.AddParameter("package_type", packageType).AddOptionalParameter("visibility", packageVisibility);
 
-            return ApiConnection.GetAll<Package>(route, parameters, options);
+            return ApiConnection.GetAll<Package>(route, parameters);
         }
 
         /// <summary>
@@ -130,7 +73,6 @@ namespace Octokit
         {
             Ensure.ArgumentNotNullOrEmptyString(org, nameof(org));
             Ensure.ArgumentNotNullOrEmptyString(packageName, nameof(packageName));
-            Ensure.ArgumentNotNull(packageType, nameof(packageType));
 
             var route = ApiUrls.PackageOrg(org, packageType, packageName);
 
@@ -166,66 +108,14 @@ namespace Octokit
         /// See the <a href="https://docs.github.com/rest/packages#list-packages-for-the-authenticated-users-namespace">API documentation</a> for more details
         /// </remarks>
         /// <param name="packageType">Required: The type of package</param>
-        [ManualRoute("GET", "/user/packages")]
-        public Task<IReadOnlyList<Package>> GetAllForActiveUser(PackageType packageType)
-        {
-            Ensure.ArgumentNotNull(packageType, nameof(packageType));
-
-            return GetAllForActiveUser(packageType, (PackageVisibility?)null);
-        }
-
-        /// <summary>
-        /// Lists packages owned by the authenticated user within the user's namespace
-        /// </summary>
-        /// <remarks>
-        /// See the <a href="https://docs.github.com/rest/packages#list-packages-for-the-authenticated-users-namespace">API documentation</a> for more details
-        /// </remarks>
-        /// <param name="packageType">Required: The type of package</param>
-        /// <param name="options">Options for changing the API response</param>
-        [ManualRoute("GET", "/user/packages")]
-        public Task<IReadOnlyList<Package>> GetAllForActiveUser(PackageType packageType, ApiOptions options)
-        {
-            Ensure.ArgumentNotNull(packageType, nameof(packageType));
-            Ensure.ArgumentNotNull(options, nameof(options));
-
-            return GetAllForActiveUser(packageType, null, options);
-        }
-
-        /// <summary>
-        /// Lists packages owned by the authenticated user within the user's namespace
-        /// </summary>
-        /// <remarks>
-        /// See the <a href="https://docs.github.com/rest/packages#list-packages-for-the-authenticated-users-namespace">API documentation</a> for more details
-        /// </remarks>
-        /// <param name="packageType">Required: The type of package</param>
         /// <param name="packageVisibility">Optional: The visibility of the package</param>
         [ManualRoute("GET", "/user/packages")]
-        public Task<IReadOnlyList<Package>> GetAllForActiveUser(PackageType packageType, PackageVisibility? packageVisibility)
+        public Task<IReadOnlyList<Package>> GetAllForActiveUser(PackageType packageType, PackageVisibility? packageVisibility = null)
         {
-            Ensure.ArgumentNotNull(packageType, nameof(packageType));
-
-            return GetAllForActiveUser(packageType, packageVisibility, ApiOptions.None);
-        }
-
-        /// <summary>
-        /// Lists packages owned by the authenticated user within the user's namespace
-        /// </summary>
-        /// <remarks>
-        /// See the <a href="https://docs.github.com/rest/packages#list-packages-for-the-authenticated-users-namespace">API documentation</a> for more details
-        /// </remarks>
-        /// <param name="packageType">Required: The type of package</param>
-        /// <param name="packageVisibility">Optional: The visibility of the package</param>
-        /// <param name="options">Options for changing the API response</param>
-        [ManualRoute("GET", "/user/packages")]
-        public Task<IReadOnlyList<Package>> GetAllForActiveUser(PackageType packageType, PackageVisibility? packageVisibility, ApiOptions options)
-        {
-            Ensure.ArgumentNotNull(packageType, nameof(packageType));
-            Ensure.ArgumentNotNull(options, nameof(options));
-
             var route = ApiUrls.PackagesActiveUser();
             var parameters = ParameterBuilder.AddParameter("package_type", packageType).AddOptionalParameter("visibility", packageVisibility);
 
-            return ApiConnection.GetAll<Package>(route, parameters, options);
+            return ApiConnection.GetAll<Package>(route, parameters);
         }
 
         /// <summary>
@@ -292,72 +182,16 @@ namespace Octokit
         /// </remarks>
         /// <param name="username">Required: Username</param>
         /// <param name="packageType">Required: The type of package</param>
-        [ManualRoute("GET", "/users/{username}/packages")]
-        public Task<IReadOnlyList<Package>> GetAllForUser(string username, PackageType packageType)
-        {
-            Ensure.ArgumentNotNullOrEmptyString(username, nameof(username));
-            Ensure.ArgumentNotNull(packageType, nameof(packageType));
-
-            return GetAllForUser(username, packageType, ApiOptions.None);
-        }
-
-        /// <summary>
-        /// Lists packages owned by the authenticated user within the user's namespace
-        /// </summary>
-        /// <remarks>
-        /// See the <a href="https://docs.github.com/rest/packages#list-packages-for-the-authenticated-users-namespace">API documentation</a> for more details
-        /// </remarks>
-        /// <param name="username">Required: Username</param>
-        /// <param name="packageType">Required: The type of package</param>
-        /// <param name="options">Options for changing the API response</param>
-        [ManualRoute("GET", "/users/{username}/packages")]
-        public Task<IReadOnlyList<Package>> GetAllForUser(string username, PackageType packageType, ApiOptions options)
-        {
-            Ensure.ArgumentNotNull(packageType, nameof(packageType));
-            Ensure.ArgumentNotNull(options, nameof(options));
-
-            return GetAllForUser(username, packageType, null, options);
-        }
-
-        /// <summary>
-        /// Lists packages owned by the authenticated user within the user's namespace
-        /// </summary>
-        /// <remarks>
-        /// See the <a href="https://docs.github.com/rest/packages#list-packages-for-the-authenticated-users-namespace">API documentation</a> for more details
-        /// </remarks>
-        /// <param name="username">Required: Username</param>
-        /// <param name="packageType">Required: The type of package</param>
         /// <param name="packageVisibility">Optional: The visibility of the package</param>
         [ManualRoute("GET", "/users/{username}/packages")]
-        public Task<IReadOnlyList<Package>> GetAllForUser(string username, PackageType packageType, PackageVisibility? packageVisibility)
+        public Task<IReadOnlyList<Package>> GetAllForUser(string username, PackageType packageType, PackageVisibility? packageVisibility = null)
         {
             Ensure.ArgumentNotNullOrEmptyString(username, nameof(username));
-            Ensure.ArgumentNotNull(packageType, nameof(packageType));
-
-            return GetAllForUser(username, packageType, packageVisibility, ApiOptions.None);
-        }
-
-        /// <summary>
-        /// Lists packages owned by the authenticated user within the user's namespace
-        /// </summary>
-        /// <remarks>
-        /// See the <a href="https://docs.github.com/rest/packages#list-packages-for-the-authenticated-users-namespace">API documentation</a> for more details
-        /// </remarks>
-        /// <param name="username">Required: Username</param>
-        /// <param name="packageType">Required: The type of package</param>
-        /// <param name="packageVisibility">Optional: The visibility of the package</param>
-        /// <param name="options">Options for changing the API response</param>
-        [ManualRoute("GET", "/users/{username}/packages")]
-        public Task<IReadOnlyList<Package>> GetAllForUser(string username, PackageType packageType, PackageVisibility? packageVisibility, ApiOptions options)
-        {
-            Ensure.ArgumentNotNullOrEmptyString(username, nameof(username));
-            Ensure.ArgumentNotNull(packageType, nameof(packageType));
-            Ensure.ArgumentNotNull(options, nameof(options));
 
             var route = ApiUrls.PackagesUser(username);
             var parameters = ParameterBuilder.AddParameter("package_type", packageType).AddOptionalParameter("visibility", packageVisibility);
 
-            return ApiConnection.GetAll<Package>(route, parameters, options);
+            return ApiConnection.GetAll<Package>(route, parameters);
         }
 
         /// <summary>
