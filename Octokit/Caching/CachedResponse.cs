@@ -28,7 +28,9 @@ namespace Octokit.Caching
                 ContentType = contentType;
             }
 
-            /// <inheritdoc/>
+            /// <summary>
+            /// Raw response body. Typically a string, but when requesting images, it will be a byte array.
+            /// </summary>
             public object Body { get; private set; }
             /// <summary>
             /// Information about the API.
