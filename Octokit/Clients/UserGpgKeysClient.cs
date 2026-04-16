@@ -53,15 +53,15 @@ namespace Octokit
         /// <summary>
         /// View extended details of the <see cref="GpgKey"/> for the specified id.
         /// </summary>
-        /// <param name="gpgKeyId">The Id of the GPG key</param>
+        /// <param name="id">The Id of the GPG key</param>
         /// <remarks>
         /// See the <a href="https://developer.github.com/v3/users/gpg_keys/#get-a-single-gpg-key">API documentation</a> for more information.
         /// </remarks>
         /// <returns>The <see cref="GpgKey"/> for the specified Id.</returns>
         [ManualRoute("GET", "/user/gpg_keys/{gpg_key_id}")]
-        public Task<GpgKey> Get(long gpgKeyId)
+        public Task<GpgKey> Get(int id)
         {
-            return ApiConnection.Get<GpgKey>(ApiUrls.GpgKeys(gpgKeyId));
+            return ApiConnection.Get<GpgKey>(ApiUrls.GpgKeys(id));
         }
 
         /// <summary>
@@ -83,15 +83,15 @@ namespace Octokit
         /// <summary>
         /// Deletes the GPG key for the specified Id.
         /// </summary>
-        /// <param name="gpgKeyId">The Id of the GPG key to delete.</param>
+        /// <param name="id">The Id of the GPG key to delete.</param>
         /// <remarks>
         /// See the <a href="https://developer.github.com/v3/users/gpg_keys/#delete-a-gpg-key">API documentation</a> for more information.
         /// </remarks>
         /// <returns></returns>
         [ManualRoute("DELETE", "/user/gpg_keys/{gpg_key_id}")]
-        public Task Delete(long gpgKeyId)
+        public Task Delete(int id)
         {
-            return ApiConnection.Delete(ApiUrls.GpgKeys(gpgKeyId));
+            return ApiConnection.Delete(ApiUrls.GpgKeys(id));
         }
     }
 }
