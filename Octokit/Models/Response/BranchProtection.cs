@@ -23,8 +23,7 @@ namespace Octokit
                                         BranchProtectionEnabledCommon allowDeletions,
                                         BranchProtectionEnabledCommon blockCreations,
                                         BranchProtectionEnabledCommon requiredConversationResolution,
-                                        BranchProtectionEnabledCommon requiredSignatures,
-                                        EnforceLock lockBranch = null)
+                                        BranchProtectionEnabledCommon requiredSignatures)
         {
             RequiredStatusChecks = requiredStatusChecks;
             RequiredPullRequestReviews = requiredPullRequestReviews;
@@ -36,8 +35,9 @@ namespace Octokit
             BlockCreations = blockCreations;
             RequiredConversationResolution = requiredConversationResolution;
             RequiredSignatures = requiredSignatures;
-            LockBranch = lockBranch != null ? lockBranch : new EnforceLock(false);
         }
+
+
 
         /// <summary>
         /// Status check settings for the protected branch
@@ -58,11 +58,6 @@ namespace Octokit
         /// Specifies whether the protections applied to this branch also apply to repository admins
         /// </summary>
         public EnforceAdmins EnforceAdmins { get; private set; }
-
-        /// <summary>
-        /// Indicates whether this branch is read-only.
-        /// </summary>
-        public EnforceLock LockBranch { get; private set; }
 
         /// <summary>
         /// Specifies whether a linear history is required
@@ -117,30 +112,6 @@ namespace Octokit
         public EnforceAdmins() { }
 
         public EnforceAdmins(bool enabled)
-        {
-            Enabled = enabled;
-        }
-
-        public bool Enabled { get; private set; }
-
-        internal string DebuggerDisplay
-        {
-            get
-            {
-                return string.Format(CultureInfo.InvariantCulture, "Enabled: {0}", Enabled);
-            }
-        }
-    }
-
-    /// <summary>
-    /// Specifies whether the this branch also should be read-only.
-    /// </summary>
-    [DebuggerDisplay("{DebuggerDisplay,nq}")]
-    public class EnforceLock
-    {
-        public EnforceLock() { }
-
-        public EnforceLock(bool enabled)
         {
             Enabled = enabled;
         }
@@ -265,10 +236,7 @@ namespace Octokit
         /// </summary>
         public int RequiredApprovingReviewCount { get; private set; }
         
-        /// <summary>
-        /// Whether the most recent push must be approved by someone other than the person who pushed it. Default: false
-        /// </summary>
-        public bool RequireLastPushApproval { get; protected set; }
+        public bool RequireLastPushApproval { get; private set; }
 
         internal string DebuggerDisplay
         {
