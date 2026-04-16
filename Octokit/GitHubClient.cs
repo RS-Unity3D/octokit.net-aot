@@ -120,9 +120,7 @@ namespace Octokit
             RateLimit = new RateLimitClient(apiConnection);
             Meta = new MetaClient(apiConnection);
             Actions = new ActionsClient(apiConnection);
-            Codespaces = new CodespacesClient(apiConnection);
-            Copilot = new CopilotClient(apiConnection);
-            DependencyGraph = new DependencyGraphClient(apiConnection);
+            AuditLog = new AuditLogClient(apiConnection);
         }
 
         /// <summary>
@@ -211,6 +209,15 @@ namespace Octokit
         /// Refer to the API documentation for more information: https://developer.github.com/v3/activity/
         /// </remarks>
         public IActivitiesClient Activity { get; private set; }
+        
+        /// <summary>
+        /// Access GitHub's Audit Log API.
+        /// </summary>
+        /// <remarks>
+        /// Refer to the API documentation for more information: https://docs.github.com/en/enterprise-cloud@latest/admin/monitoring-activity-in-your-enterprise/reviewing-audit-logs-for-your-enterprise/using-the-audit-log-api-for-your-enterprise
+        /// </remarks>
+        public IAuditLogClient AuditLog { get; private set; }
+
 
         /// <summary>
         /// Access GitHub's Emojis API.
@@ -261,7 +268,7 @@ namespace Octokit
         public IOrganizationsClient Organization { get; private set; }
 
         /// <summary>
-        /// Access GitHub's Packages API.
+        /// Access GitHub's Pacakges API.
         /// </summary>
         /// <remarks>
         /// Refer to the API documentation for more information: https://docs.github.com/rest/packages
@@ -395,18 +402,6 @@ namespace Octokit
         /// Refer to the API documentation for more information: https://developer.github.com/v3/actions/
         /// </remarks>
         public IActionsClient Actions { get; private set; }
-
-        public ICodespacesClient Codespaces { get; private set; }
-
-        /// <summary>
-        /// Access GitHub's Copilot for Business API
-        /// </summary>
-        public ICopilotClient Copilot { get; private set; }
-
-        /// <summary>
-        /// Access GitHub's Dependency Graph API
-        /// </summary>
-        public IDependencyGraphClient DependencyGraph { get; private set; }
 
         static Uri FixUpBaseUri(Uri uri)
         {

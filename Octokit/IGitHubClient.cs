@@ -96,7 +96,7 @@ namespace Octokit
         IOrganizationsClient Organization { get; }
 
         /// <summary>
-        /// Access GitHub's Packages API.
+        /// Access GitHub's Pacakges API.
         /// </summary>
         /// <remarks>
         /// Refer to the API documentation for more information: https://docs.github.com/rest/packages
@@ -215,17 +215,6 @@ namespace Octokit
         /// </remarks>
         ILicensesClient Licenses { get; }
         IEmojisClient Emojis { get; }
-
-        ICodespacesClient Codespaces { get; }
-
-        /// <summary>
-        /// Access to the GitHub Copilot for Business API
-        /// </summary>
-        ICopilotClient Copilot { get; }
-
-        /// <summary>
-        /// Access GitHub's Dependency Graph API
-        /// </summary>
-        IDependencyGraphClient DependencyGraph { get; }
+        IAuditLogClient AuditLog { get; }
     }
 }
