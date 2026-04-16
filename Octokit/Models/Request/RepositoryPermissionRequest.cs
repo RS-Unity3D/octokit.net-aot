@@ -10,7 +10,7 @@ namespace Octokit
         /// <summary>
         /// Used to add or update a team repository.
         /// </summary>
-        public RepositoryPermissionRequest(TeamPermissionLegacy permission)
+        public RepositoryPermissionRequest(Permission permission)
         {
             Permission = permission;
         }
@@ -18,7 +18,7 @@ namespace Octokit
         /// <summary>
         /// The permission to grant the team on this repository.
         /// </summary>        
-        public TeamPermissionLegacy Permission { get; private set; }
+        public Permission Permission { get; private set; }
 
         internal string DebuggerDisplay
         {

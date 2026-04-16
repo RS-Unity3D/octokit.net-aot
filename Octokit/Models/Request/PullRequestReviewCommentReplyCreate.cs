@@ -14,7 +14,7 @@ namespace Octokit
         /// </summary>
         /// <param name="body">The text of the comment</param>
         /// <param name="inReplyTo">The comment Id to reply to</param>
-        public PullRequestReviewCommentReplyCreate(string body, long inReplyTo)
+        public PullRequestReviewCommentReplyCreate(string body, int inReplyTo)
         {
             Ensure.ArgumentNotNullOrEmptyString(body, nameof(body));
 
@@ -30,7 +30,7 @@ namespace Octokit
         /// <summary>
         /// The comment Id to reply to.
         /// </summary>
-        public long InReplyTo { get; private set; }
+        public int InReplyTo { get; private set; }
 
         internal string DebuggerDisplay
         {

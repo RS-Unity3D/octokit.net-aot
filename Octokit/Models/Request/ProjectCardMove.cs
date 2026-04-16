@@ -6,7 +6,7 @@ namespace Octokit
     [DebuggerDisplay("{DebuggerDisplay,nq}")]
     public class ProjectCardMove
     {
-        public ProjectCardMove(ProjectCardPosition position, int columnId, long? cardId)
+        public ProjectCardMove(ProjectCardPosition position, int columnId, int? cardId)
         {
             ColumnId = columnId;
             switch (position)

@@ -60,7 +60,7 @@ namespace Octokit
         /// <summary>
         /// Id of a team to set as the parent team
         /// </summary>
-        public long? ParentTeamId { get; set; }
+        public int? ParentTeamId { get; set; }
 
         internal string DebuggerDisplay
         {

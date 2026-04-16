@@ -74,15 +74,6 @@ namespace Octokit
         public bool Prerelease { get; set; }
 
         /// <summary>
-        /// If specified, a discussion of the specified category is created and linked to the release.
-        /// The value must be a category that already exists in the repository.
-        /// <value>
-        /// The discussion category name.
-        /// </value>
-        /// </summary>
-        public string DiscussionCategoryName { get; set; }
-
-        /// <summary>
         /// Gets or sets a value indicating whether to automatically generate the name and body for this release.
         /// If <see cref="Name">name</see> is specified, the specified name will be used; otherwise, a name will
         /// be automatically generated. If <see cref="Body">body</see> is specified, the body will be pre-pended to the
@@ -92,16 +83,6 @@ namespace Octokit
         ///   <c>true</c> to generate release notes; otherwise, <c>false</c>.
         /// </value>
         public bool GenerateReleaseNotes { get; set; }
-
-        /// <summary>
-        /// Specifies whether this release should be set as the latest release for the repository.
-        /// Drafts and prereleases cannot be set as latest. Defaults to true for newly published releases.
-        /// </summary>
-        /// <value>
-        ///   <c>True</c> set release as latest;
-        ///   <c>Legacy</c> specifies that the latest release should be determined based on the release creation date and higher semantic version.
-        /// </value>
-        public MakeLatestQualifier? MakeLatest { get; set; }
 
         internal string DebuggerDisplay
         {
