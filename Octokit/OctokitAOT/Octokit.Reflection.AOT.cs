@@ -132,7 +132,7 @@ namespace Octokit
                 {
                     var typeDefinition = typeInfo.GetGenericTypeDefinition();
 
-                    return typeof(StringEnum<>).IsAssignableFrom(typeDefinition);
+                    return typeDefinition == typeof(StringEnum<>);
                 }
                 return false;
             }
