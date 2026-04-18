@@ -9,13 +9,12 @@ namespace Octokit.Internal
     using System.Linq;
     using System.Reflection;
     using RS.SimpleJsonUnity;
-    using RS.Octokit.AOT;
+    using RS.OctokitAOT;
 
     public class SimpleJsonSerializer : IJsonSerializer
     {
         static SimpleJsonSerializer()
-        { 
-            
+        {
             //注册序列化/反序列化为json的对象的构造器
             RS.SimpleJsonUnity.SimpleJson.InitializeCommonAotTypes();
             // 注册基本集合类型
