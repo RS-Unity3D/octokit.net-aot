@@ -1,28 +1,26 @@
-using System;
-using System.Collections;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Reflection;
-using Octokit;
-using Octokit.Internal;
-using Octokit.Reflection;
-
 #if USE_AOT_JSON
-using RS.SimpleJsonUnity;
-#endif
 
-namespace RS.Octokit.AOT
+
+namespace RS.OctokitAOT
 {
-#if USE_AOT_JSON
+    using System;
+    using System.Collections;
+    using System.Collections.Concurrent;
+    using System.Collections.Generic;
+    using System.Globalization;
+    using System.Linq;
+    using System.Reflection;
+    using Octokit;
+    using Octokit.Internal;
+    using Octokit.Reflection;
+    using RS.SimpleJsonUnity;
     internal class GitHubJsonSerializerStrategy : RS.SimpleJsonUnity.DefaultJsonSerializationStrategy
     {
-        private readonly ConcurrentDictionary<Type, ConcurrentDictionary<object, object>> _cachedEnums
-            = new ConcurrentDictionary<Type, ConcurrentDictionary<object, object>>();
+        private readonly ConcurrentDictionary<Type,ConcurrentDictionary<object,object>> _cachedEnums
+            = new ConcurrentDictionary<Type,ConcurrentDictionary<object,object>>();
 
-        private readonly ConcurrentDictionary<Type, IDictionary<string, PropertyOrField>> _propertiesCache
-            = new ConcurrentDictionary<Type, IDictionary<string, PropertyOrField>>();
+        private readonly ConcurrentDictionary<Type,IDictionary<string,PropertyOrField>> _propertiesCache
+            = new ConcurrentDictionary<Type,IDictionary<string,PropertyOrField>>();
 
         private string _activityType;
 
@@ -50,7 +48,7 @@ namespace RS.Octokit.AOT
         {
         }
 
-        public override bool TrySerializeNonPrimitiveObject(object input, out object output)
+        public override bool TrySerializeNonPrimitiveObject(object input,out object output)
         {
             if (input == null)
             {
@@ -76,7 +74,7 @@ namespace RS.Octokit.AOT
             {
                 if (input is IDictionary dict)
                 {
-                    var result = new Dictionary<string, object>();
+                    var result = new Dictionary<string,object>();
                     foreach (DictionaryEntry entry in dict)
                     {
                         var key = entry.Key?.ToString() ?? "";
@@ -92,7 +90,7 @@ namespace RS.Octokit.AOT
                         {
                             result[key] = enumVal.ToParameter();
                         }
-                        else if (TrySerializeNonPrimitiveObject(entry.Value, out var nested))
+                        else if (TrySerializeNonPrimitiveObject(entry.Value,out var nested))
                         {
                             result[key] = nested;
                         }
@@ -122,7 +120,7 @@ namespace RS.Octokit.AOT
                         {
                             list.Add(enumVal.ToParameter());
                         }
-                        else if (TrySerializeNonPrimitiveObject(item, out var nested))
+                        else if (TrySerializeNonPrimitiveObject(item,out var nested))
                         {
                             list.Add(nested);
                         }
@@ -136,7 +134,7 @@ namespace RS.Octokit.AOT
                 }
 
                 var properties = GetOrBuildProperties(type);
-                var obj = new Dictionary<string, object>();
+                var obj = new Dictionary<string,object>();
 
                 foreach (var prop in properties.Values.Where(p => p.CanSerialize))
                 {
@@ -160,7 +158,7 @@ namespace RS.Octokit.AOT
                     {
                         obj[prop.JsonFieldName] = dto.ToString("o");
                     }
-                    else if (TrySerializeNonPrimitiveObject(value, out var nested))
+                    else if (TrySerializeNonPrimitiveObject(value,out var nested))
                     {
                         obj[prop.JsonFieldName] = nested;
                     }
@@ -180,7 +178,7 @@ namespace RS.Octokit.AOT
             }
         }
 
-        public override object DeserializeObject(object value, Type type)
+        public override object DeserializeObject(object value,Type type)
         {
             if (value == null)
                 return null;
@@ -224,9 +222,9 @@ namespace RS.Octokit.AOT
                 var str = value as string;
                 if (str != null)
                 {
-                    if (Uri.IsWellFormedUriString(str, UriKind.RelativeOrAbsolute))
+                    if (Uri.IsWellFormedUriString(str,UriKind.RelativeOrAbsolute))
                     {
-                        Uri.TryCreate(str, UriKind.RelativeOrAbsolute, out var result);
+                        Uri.TryCreate(str,UriKind.RelativeOrAbsolute,out var result);
                         return result;
                     }
                 }
@@ -250,9 +248,9 @@ namespace RS.Octokit.AOT
                 var str = value as string;
                 if (str != null)
                 {
-                    if (long.TryParse(str, out var ticks))
+                    if (long.TryParse(str,out var ticks))
                         return new TimeSpan(ticks);
-                    return TimeSpan.Parse(str, CultureInfo.InvariantCulture);
+                    return TimeSpan.Parse(str,CultureInfo.InvariantCulture);
                 }
                 return value;
             }
@@ -264,12 +262,12 @@ namespace RS.Octokit.AOT
                 {
                     try
                     {
-                        return DateTime.ParseExact(str, "yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture,
+                        return DateTime.ParseExact(str,"yyyy-MM-ddTHH:mm:ssZ",CultureInfo.InvariantCulture,
                             DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal);
                     }
                     catch
                     {
-                        return DateTime.TryParse(str, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal, out var dt)
+                        return DateTime.TryParse(str,CultureInfo.InvariantCulture,DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal,out var dt)
                             ? dt : default(DateTime);
                     }
                 }
@@ -287,12 +285,12 @@ namespace RS.Octokit.AOT
                 {
                     try
                     {
-                        return DateTimeOffset.ParseExact(str, "yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture,
+                        return DateTimeOffset.ParseExact(str,"yyyy-MM-ddTHH:mm:ssZ",CultureInfo.InvariantCulture,
                             DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal);
                     }
                     catch
                     {
-                        return DateTimeOffset.TryParse(str, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal, out var dto)
+                        return DateTimeOffset.TryParse(str,CultureInfo.InvariantCulture,DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal,out var dto)
                             ? dto : default(DateTimeOffset);
                     }
                 }
@@ -305,41 +303,41 @@ namespace RS.Octokit.AOT
 
             if (typeInfo.IsPrimitive || type == typeof(decimal))
             {
-                return ConvertPrimitive(value, type);
+                return ConvertPrimitive(value,type);
             }
 
             if (typeInfo.IsEnum)
             {
-                return DeserializeEnumValue(value, type);
+                return DeserializeEnumValue(value,type);
             }
 
             if (ReflectionUtils.IsStringEnumWrapper(type))
             {
-                return DeserializeStringEnum(value, type);
+                return DeserializeStringEnum(value,type);
             }
 
             var stringValue = value as string;
-            var dictValue = value as IDictionary<string, object>;
+            var dictValue = value as IDictionary<string,object>;
             var arrayValue = value as IList<object>;
 
             if (dictValue != null)
             {
-                return DeserializeFromDictionary(dictValue, type);
+                return DeserializeFromDictionary(dictValue,type);
             }
 
             if (arrayValue != null)
             {
-                return DeserializeFromArray(arrayValue, type);
+                return DeserializeFromArray(arrayValue,type);
             }
 
             if (value is IDictionary nonGenericDict)
             {
-                var genericDict = new Dictionary<string, object>();
+                var genericDict = new Dictionary<string,object>();
                 foreach (DictionaryEntry entry in nonGenericDict)
                 {
                     genericDict[entry.Key?.ToString() ?? ""] = entry.Value;
                 }
-                return DeserializeFromDictionary(genericDict, type);
+                return DeserializeFromDictionary(genericDict,type);
             }
 
             if (value is IEnumerable enumerable && !(value is string))
@@ -349,7 +347,7 @@ namespace RS.Octokit.AOT
                 {
                     genericList.Add(item);
                 }
-                return DeserializeFromArray(genericList, type);
+                return DeserializeFromArray(genericList,type);
             }
 
             return value;
@@ -362,9 +360,9 @@ namespace RS.Octokit.AOT
             _propertiesCache.Clear();
         }
 
-        private IDictionary<string, PropertyOrField> GetOrBuildProperties(Type type)
+        private IDictionary<string,PropertyOrField> GetOrBuildProperties(Type type)
         {
-            return _propertiesCache.GetOrAdd(type, t =>
+            return _propertiesCache.GetOrAdd(type,t =>
             {
                 var allProperties = new List<PropertyInfo>();
                 var allFields = new List<FieldInfo>();
@@ -377,7 +375,7 @@ namespace RS.Octokit.AOT
                 }
 
                 var seen = new HashSet<string>();
-                var result = new List<PropertyOrField>();
+                var seenJsonKey = new Dictionary<string,PropertyOrField>();
 
                 foreach (var p in allProperties)
                 {
@@ -385,7 +383,9 @@ namespace RS.Octokit.AOT
                     if (!p.CanRead) continue;
                     if (seen.Contains(p.Name)) continue;
                     seen.Add(p.Name);
-                    result.Add(new PropertyOrField(p));
+                    var pf = new PropertyOrField(p);
+                    if (!seenJsonKey.ContainsKey(pf.JsonFieldName))
+                        seenJsonKey[pf.JsonFieldName] = pf;
                 }
 
                 foreach (var f in allFields)
@@ -393,40 +393,50 @@ namespace RS.Octokit.AOT
                     if (seen.Contains(f.Name)) continue;
                     if (f.IsInitOnly) continue;
                     seen.Add(f.Name);
-                    result.Add(new PropertyOrField(f));
+                    var pf = new PropertyOrField(f);
+                    if (!seenJsonKey.ContainsKey(pf.JsonFieldName))
+                        seenJsonKey[pf.JsonFieldName] = pf;
                 }
 
-                return result.ToDictionary(p => p.JsonFieldName, p => p);
+                return seenJsonKey;
             });
         }
 
-        private object DeserializeStringEnum(object value, Type type)
+        private object DeserializeStringEnum(object value,Type type)
         {
             try
             {
-                var factory = RS.SimpleJsonUnity.SimpleJson.GetRegisteredAotFactory(type);
-                if (factory != null)
+                var stringValue = value as string ?? "null";
+                var ctor = type.GetConstructor(new Type[] { typeof(string) });
+                if (ctor != null)
                 {
-                    var instance = factory();
-                    var stringValue = value as string ?? "null";
-                    var valueProp = type.GetProperty("Value");
-                    if (valueProp != null)
-                        valueProp.SetValue(instance, stringValue, null);
-                    return instance;
+                    return ctor.Invoke(new object[] { stringValue });
                 }
-                return Activator.CreateInstance(type, value ?? "null");
+                return Activator.CreateInstance(type,stringValue);
             }
             catch
             {
-                return null;
+                try
+                {
+                    var ctor = type.GetConstructor(new Type[] { typeof(string) });
+                    if (ctor != null)
+                    {
+                        return ctor.Invoke(new object[] { "null" });
+                    }
+                    return Activator.CreateInstance(type,"null");
+                }
+                catch
+                {
+                    return null;
+                }
             }
         }
 
-        private object DeserializeEnumValue(object value, Type type)
+        private object DeserializeEnumValue(object value,Type type)
         {
             if (value is string strValue)
             {
-                return DeserializeEnum(strValue, type);
+                return DeserializeEnum(strValue,type);
             }
 
             if (value is long || value is int || value is double
@@ -435,13 +445,13 @@ namespace RS.Octokit.AOT
                 || value is byte || value is sbyte
                 || value is decimal || value is float)
             {
-                return SafeEnumConversion(value, type);
+                return SafeEnumConversion(value,type);
             }
 
-            return DeserializeEnum(value?.ToString() ?? "", type);
+            return DeserializeEnum(value?.ToString() ?? "",type);
         }
 
-        private static object SafeEnumConversion(object value, Type enumType)
+        private static object SafeEnumConversion(object value,Type enumType)
         {
             if (value == null || !enumType.IsEnum) return value;
 
@@ -453,33 +463,33 @@ namespace RS.Octokit.AOT
             else if (value is short s) longVal = s;
             else if (value is byte b) longVal = b;
             else if (value is sbyte sb) longVal = sb;
-            else if (value is ulong ul) return Enum.ToObject(enumType, ul);
-            else if (value is uint ui) return Enum.ToObject(enumType, ui);
-            else if (value is ushort us) return Enum.ToObject(enumType, us);
+            else if (value is ulong ul) return Enum.ToObject(enumType,ul);
+            else if (value is uint ui) return Enum.ToObject(enumType,ui);
+            else if (value is ushort us) return Enum.ToObject(enumType,us);
             else if (value is double d) longVal = (long)Math.Truncate(d);
             else if (value is float f) longVal = (long)Math.Truncate(f);
             else if (value is decimal dec) longVal = (long)Math.Truncate(dec);
             else
             {
-                try { longVal = Convert.ToInt64(value, CultureInfo.InvariantCulture); }
-                catch { return Enum.ToObject(enumType, value); }
+                try { longVal = Convert.ToInt64(value,CultureInfo.InvariantCulture); }
+                catch { return Enum.ToObject(enumType,value); }
             }
 
-            if (underlyingType == typeof(int)) return Enum.ToObject(enumType, (int)longVal);
-            if (underlyingType == typeof(long)) return Enum.ToObject(enumType, longVal);
-            if (underlyingType == typeof(short)) return Enum.ToObject(enumType, (short)longVal);
-            if (underlyingType == typeof(byte)) return Enum.ToObject(enumType, (byte)longVal);
-            if (underlyingType == typeof(sbyte)) return Enum.ToObject(enumType, (sbyte)longVal);
-            if (underlyingType == typeof(uint)) return Enum.ToObject(enumType, (uint)longVal);
-            if (underlyingType == typeof(ulong)) return Enum.ToObject(enumType, (ulong)longVal);
-            if (underlyingType == typeof(ushort)) return Enum.ToObject(enumType, (ushort)longVal);
+            if (underlyingType == typeof(int)) return Enum.ToObject(enumType,(int)longVal);
+            if (underlyingType == typeof(long)) return Enum.ToObject(enumType,longVal);
+            if (underlyingType == typeof(short)) return Enum.ToObject(enumType,(short)longVal);
+            if (underlyingType == typeof(byte)) return Enum.ToObject(enumType,(byte)longVal);
+            if (underlyingType == typeof(sbyte)) return Enum.ToObject(enumType,(sbyte)longVal);
+            if (underlyingType == typeof(uint)) return Enum.ToObject(enumType,(uint)longVal);
+            if (underlyingType == typeof(ulong)) return Enum.ToObject(enumType,(ulong)longVal);
+            if (underlyingType == typeof(ushort)) return Enum.ToObject(enumType,(ushort)longVal);
 
-            return Enum.ToObject(enumType, longVal);
+            return Enum.ToObject(enumType,longVal);
         }
 
-        private object DeserializeFromDictionary(IDictionary<string, object> dict, Type type)
+        private object DeserializeFromDictionary(IDictionary<string,object> dict,Type type)
         {
-            if (type == typeof(Activity) && dict.TryGetValue("type", out var typeObj))
+            if (type == typeof(Activity) && dict.TryGetValue("type",out var typeObj))
             {
                 _activityType = typeObj?.ToString();
             }
@@ -491,7 +501,7 @@ namespace RS.Octokit.AOT
 
             if (ReflectionUtils.IsStringEnumWrapper(type))
             {
-                return DeserializeStringEnum(null, type);
+                return DeserializeStringEnum(null,type);
             }
 
             if (ReflectionUtils.IsTypeDictionary(type))
@@ -514,7 +524,7 @@ namespace RS.Octokit.AOT
                     }
                     catch
                     {
-                        var dictType = typeof(Dictionary<,>).MakeGenericType(keyType, valueType);
+                        var dictType = typeof(Dictionary<,>).MakeGenericType(keyType,valueType);
                         factory = RS.SimpleJsonUnity.SimpleJson.GetRegisteredAotFactory(dictType);
                         if (factory != null)
                         {
@@ -529,8 +539,8 @@ namespace RS.Octokit.AOT
 
                 foreach (var kvp in dict)
                 {
-                    var dictKey = ConvertDictionaryKey(kvp.Key, keyType);
-                    var dictValue = DeserializeObject(kvp.Value, valueType);
+                    var dictKey = ConvertDictionaryKey(kvp.Key,keyType);
+                    var dictValue = DeserializeObject(kvp.Value,valueType);
                     dictInstance[dictKey] = dictValue;
                 }
 
@@ -560,31 +570,52 @@ namespace RS.Octokit.AOT
                     return null;
                 var properties = GetOrBuildProperties(type);
 
-                foreach (var prop in properties.Values.Where(p => p.CanWrite && !p.IsStatic))
+                foreach (var kvp in dict)
                 {
-                    if (dict.TryGetValue(prop.JsonFieldName, out var value))
+                    PropertyOrField prop;
+                    if (!properties.TryGetValue(kvp.Key,out prop))
+                        continue;
+
+                    if (!prop.CanWrite || prop.IsStatic)
+                        continue;
+
+                    object convertedValue;
+                    try
                     {
-                        var convertedValue = DeserializeObject(value, prop.Type);
-                        try
+                        convertedValue = DeserializeObject(kvp.Value,prop.Type);
+                    }
+                    catch
+                    {
+                        continue;
+                    }
+
+                    var pi = prop.MemberInfo as PropertyInfo;
+                    if (pi != null)
+                    {
+                        var setter = pi.GetSetMethod(true);
+                        if (setter != null)
                         {
-                            prop.SetValue(result, convertedValue);
+                            try { setter.Invoke(result,new object[] { convertedValue }); }
+                            catch { }
                         }
-                        catch
+                    }
+                    else
+                    {
+                        var fi = prop.MemberInfo as FieldInfo;
+                        if (fi != null && !fi.IsInitOnly)
                         {
-                            var pi = prop.MemberInfo as PropertyInfo;
-                            if (pi != null && pi.GetSetMethod(true) != null)
-                            {
-                                try { pi.SetValue(result, convertedValue, null); }
-                                catch { }
-                            }
+                            try { fi.SetValue(result,convertedValue); }
+                            catch { }
                         }
                     }
                 }
 
                 return result;
             }
-            catch
+            catch (Exception ex)
             {
+                System.Diagnostics.Debug.WriteLine($"DeserializeFromDictionary failed for {type.Name}: {ex.Message}");
+                System.Console.Error.WriteLine($"[AOT] DeserializeFromDictionary failed for {type.Name}: {ex.GetType().Name}: {ex.Message}");
                 return null;
             }
             finally
@@ -593,26 +624,26 @@ namespace RS.Octokit.AOT
             }
         }
 
-        private object ConvertDictionaryKey(string key, Type keyType)
+        private object ConvertDictionaryKey(string key,Type keyType)
         {
             if (keyType == typeof(string))
                 return key;
-            if (keyType == typeof(int) && int.TryParse(key, out var intKey))
+            if (keyType == typeof(int) && int.TryParse(key,out var intKey))
                 return intKey;
-            if (keyType == typeof(long) && long.TryParse(key, out var longKey))
+            if (keyType == typeof(long) && long.TryParse(key,out var longKey))
                 return longKey;
-            return Convert.ChangeType(key, keyType, CultureInfo.InvariantCulture);
+            return Convert.ChangeType(key,keyType,CultureInfo.InvariantCulture);
         }
 
-        private object DeserializeFromArray(IList<object> array, Type type)
+        private object DeserializeFromArray(IList<object> array,Type type)
         {
             if (type.IsArray)
             {
                 var elementType = type.GetElementType();
-                var arr = Array.CreateInstance(elementType, array.Count);
+                var arr = Array.CreateInstance(elementType,array.Count);
                 for (int i = 0; i < array.Count; i++)
                 {
-                    arr.SetValue(DeserializeObject(array[i], elementType), i);
+                    arr.SetValue(DeserializeObject(array[i],elementType),i);
                 }
                 return arr;
             }
@@ -660,7 +691,7 @@ namespace RS.Octokit.AOT
 
                 foreach (var item in array)
                 {
-                    var convertedItem = DeserializeObject(item, elementType);
+                    var convertedItem = DeserializeObject(item,elementType);
                     list.Add(convertedItem);
                 }
 
@@ -670,40 +701,40 @@ namespace RS.Octokit.AOT
             return array;
         }
 
-        private object ConvertPrimitive(object value, Type targetType)
+        private object ConvertPrimitive(object value,Type targetType)
         {
             if (value == null) return null;
 
             if (targetType == typeof(int))
-                return Convert.ToInt32(value, CultureInfo.InvariantCulture);
+                return Convert.ToInt32(value,CultureInfo.InvariantCulture);
             if (targetType == typeof(long))
-                return Convert.ToInt64(value, CultureInfo.InvariantCulture);
+                return Convert.ToInt64(value,CultureInfo.InvariantCulture);
             if (targetType == typeof(short))
-                return Convert.ToInt16(value, CultureInfo.InvariantCulture);
+                return Convert.ToInt16(value,CultureInfo.InvariantCulture);
             if (targetType == typeof(byte))
-                return Convert.ToByte(value, CultureInfo.InvariantCulture);
+                return Convert.ToByte(value,CultureInfo.InvariantCulture);
             if (targetType == typeof(sbyte))
-                return Convert.ToSByte(value, CultureInfo.InvariantCulture);
+                return Convert.ToSByte(value,CultureInfo.InvariantCulture);
             if (targetType == typeof(uint))
-                return Convert.ToUInt32(value, CultureInfo.InvariantCulture);
+                return Convert.ToUInt32(value,CultureInfo.InvariantCulture);
             if (targetType == typeof(ulong))
-                return Convert.ToUInt64(value, CultureInfo.InvariantCulture);
+                return Convert.ToUInt64(value,CultureInfo.InvariantCulture);
             if (targetType == typeof(ushort))
-                return Convert.ToUInt16(value, CultureInfo.InvariantCulture);
+                return Convert.ToUInt16(value,CultureInfo.InvariantCulture);
             if (targetType == typeof(float))
-                return Convert.ToSingle(value, CultureInfo.InvariantCulture);
+                return Convert.ToSingle(value,CultureInfo.InvariantCulture);
             if (targetType == typeof(double))
-                return Convert.ToDouble(value, CultureInfo.InvariantCulture);
+                return Convert.ToDouble(value,CultureInfo.InvariantCulture);
             if (targetType == typeof(decimal))
-                return Convert.ToDecimal(value, CultureInfo.InvariantCulture);
+                return Convert.ToDecimal(value,CultureInfo.InvariantCulture);
             if (targetType == typeof(bool))
-                return Convert.ToBoolean(value, CultureInfo.InvariantCulture);
+                return Convert.ToBoolean(value,CultureInfo.InvariantCulture);
             if (targetType == typeof(char))
-                return Convert.ToChar(value, CultureInfo.InvariantCulture);
+                return Convert.ToChar(value,CultureInfo.InvariantCulture);
 
             try
             {
-                return Convert.ChangeType(value, targetType, CultureInfo.InvariantCulture);
+                return Convert.ChangeType(value,targetType,CultureInfo.InvariantCulture);
             }
             catch
             {
@@ -711,11 +742,11 @@ namespace RS.Octokit.AOT
             }
         }
 
-        private object DeserializeEnum(string value, Type type)
+        private object DeserializeEnum(string value,Type type)
         {
-            var cachedEnumsForType = _cachedEnums.GetOrAdd(type, t =>
+            var cachedEnumsForType = _cachedEnums.GetOrAdd(type,t =>
             {
-                var enumsForType = new ConcurrentDictionary<object, object>();
+                var enumsForType = new ConcurrentDictionary<object,object>();
                 var fields = type.GetRuntimeFields();
                 foreach (var field in fields)
                 {
@@ -724,17 +755,17 @@ namespace RS.Octokit.AOT
                     var attribute = (ParameterAttribute)field.GetCustomAttribute(typeof(ParameterAttribute));
                     if (attribute != null)
                     {
-                        enumsForType.GetOrAdd(attribute.Value, _ => field.GetValue(null));
+                        enumsForType.GetOrAdd(attribute.Value,_ => field.GetValue(null));
                     }
                 }
                 return enumsForType;
             });
 
-            return cachedEnumsForType.GetOrAdd(value, v =>
+            return cachedEnumsForType.GetOrAdd(value,v =>
             {
-                if (long.TryParse(v.ToString(), out var numVal))
-                    return SafeEnumConversion(numVal, type);
-                return Enum.Parse(type, v.ToString(), ignoreCase: true);
+                if (long.TryParse(v.ToString(),out var numVal))
+                    return SafeEnumConversion(numVal,type);
+                return Enum.Parse(type,v.ToString(),ignoreCase: true);
             });
         }
 
@@ -776,5 +807,6 @@ namespace RS.Octokit.AOT
             return typeof(ActivityPayload);
         }
     }
-#endif
+
 }
+#endif
